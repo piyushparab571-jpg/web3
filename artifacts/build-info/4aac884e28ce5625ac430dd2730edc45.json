@@ -1,0 +1,3840 @@
+{
+	"id": "4aac884e28ce5625ac430dd2730edc45",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.34",
+	"solcLongVersion": "0.8.34+commit.80d5c536",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"task16.sol": {
+				"content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.20;\r\n\r\n/*\r\n=========================================================\r\nPRACTICAL: Create local uint variable\r\nCONCEPT: Temporary execution memory\r\n=========================================================\r\n\r\nOBJECTIVE\r\n\r\n- Learn how local variables work in Solidity\r\n- Understand temporary execution memory\r\n- Learn difference between local variables and storage\r\n- Understand variable lifetime during execution\r\n\r\n---------------------------------------------------------\r\nCORE IDEA\r\n---------------------------------------------------------\r\n\r\nLocal variables exist ONLY during\r\nfunction execution.\r\n\r\nAfter function completes:\r\nlocal variables disappear.\r\n\r\n---------------------------------------------------------\r\nIMPORTANT UNDERSTANDING\r\n---------------------------------------------------------\r\n\r\nLocal variables are NOT stored permanently\r\non blockchain storage.\r\n\r\nThey usually live in:\r\n- stack\r\n- memory\r\n\r\n---------------------------------------------------------\r\nSTATE VARIABLE VS LOCAL VARIABLE\r\n---------------------------------------------------------\r\n\r\nSTATE VARIABLE:\r\n- stored permanently\r\n- lives in storage\r\n- persists across transactions\r\n\r\nLOCAL VARIABLE:\r\n- temporary\r\n- exists only during execution\r\n- disappears after function ends\r\n\r\n---------------------------------------------------------\r\nREAL-WORLD USAGE\r\n---------------------------------------------------------\r\n\r\nLocal variables are used for:\r\n\r\n- calculations\r\n- temporary values\r\n- loop counters\r\n- intermediate logic\r\n- gas optimization\r\n\r\n---------------------------------------------------------\r\nAUDITOR FOCUS\r\n---------------------------------------------------------\r\n\r\nAuditors inspect:\r\n\r\n- Is temporary data handled correctly?\r\n- Is storage used unnecessarily?\r\n- Are local variables initialized?\r\n- Can uninitialized variables cause bugs?\r\n- Is memory usage efficient?\r\n\r\n=========================================================\r\n*/\r\n/*\r\ncontract LocalUintVariableVul {\r\n\r\n    uint256 public storedValue;\r\n\r\n    function calculateSum(uint256 _a, uint256 _b)\r\n        public\r\n        pure\r\n        returns (uint256)\r\n    {\r\n\r\n        /*\r\n            LOCAL VARIABLE\r\n\r\n            sum exists ONLY during execution.\r\n\r\n            It is NOT stored permanently\r\n            on blockchain storage.\r\n        \r\n        uint256 sum = _a + _b;\r\n\r\n        return sum;\r\n    }\r\n\r\n    function storeCalculatedValue(\r\n        uint256 _x,\r\n        uint256 _y\r\n    ) public {\r\n\r\n        /*\r\n            TEMPORARY LOCAL VARIABLE\r\n\r\n            Used for intermediate computation.\r\n        \r\n        uint256 result = _x + _y;\r\n\r\n        /*\r\n            STORAGE WRITE\r\n\r\n            Only this line modifies blockchain state.\r\n        \r\n        storedValue = result;\r\n    }\r\n\r\n    function demonstrateLocalVariable()\r\n        public\r\n        pure\r\n        returns (uint256)\r\n    {\r\n\r\n        /*\r\n            Local variable created\r\n        \r\n        uint256 temp = 100;\r\n\r\n        /*\r\n            temp exists only during this function call\r\n        \r\n        temp = temp + 50;\r\n\r\n        return temp;\r\n    }\r\n}\r\n*/\r\n/*\r\n=========================================================\r\nEXECUTION FLOW\r\n=========================================================\r\n\r\nCALL:\r\ncalculateSum(10, 20)\r\n\r\nEVM ACTIONS:\r\n\r\n1. _a and _b arrive through calldata\r\n2. Local variable sum created\r\n3. Addition performed\r\n4. sum temporarily stores result\r\n5. Result returned\r\n6. sum destroyed after execution\r\n\r\n---------------------------------------------------------\r\n\r\nIMPORTANT\r\n\r\nsum does NOT persist on blockchain.\r\n\r\n---------------------------------------------------------\r\n\r\nCALL:\r\nstoreCalculatedValue(5, 7)\r\n\r\nEVM ACTIONS:\r\n\r\n1. Local variable result created\r\n2. result = 12\r\n3. storedValue updated in storage\r\n4. result destroyed after execution\r\n5. storedValue persists permanently\r\n\r\n=========================================================\r\nREMIX TESTING\r\n=========================================================\r\n\r\nSTEP 1:\r\nDeploy contract\r\n\r\n---------------------------------------------------------\r\n\r\nSTEP 2:\r\nCall:\r\ncalculateSum(10,20)\r\n\r\nEXPECTED:\r\n30\r\n\r\n---------------------------------------------------------\r\n\r\nSTEP 3:\r\nCall:\r\nstoredValue()\r\n\r\nEXPECTED:\r\n0\r\n\r\nOBSERVE:\r\ncalculateSum did NOT modify storage.\r\n\r\n---------------------------------------------------------\r\n\r\nSTEP 4:\r\nCall:\r\nstoreCalculatedValue(5,7)\r\n\r\n---------------------------------------------------------\r\n\r\nSTEP 5:\r\nCall:\r\nstoredValue()\r\n\r\nEXPECTED:\r\n12\r\n\r\n---------------------------------------------------------\r\n\r\nSTEP 6:\r\nCall:\r\ndemonstrateLocalVariable()\r\n\r\nEXPECTED:\r\n150\r\n\r\n=========================================================\r\nEDGE CASE TESTS\r\n=========================================================\r\n\r\nTEST:\r\nUse zero values\r\n\r\ncalculateSum(0,0)\r\n\r\nEXPECTED:\r\n0\r\n\r\n---------------------------------------------------------\r\n\r\nTEST:\r\nUse large uint256 values\r\n\r\nEXPECTED:\r\nSolidity ^0.8.x prevents overflow\r\n\r\n---------------------------------------------------------\r\n\r\nTEST:\r\nCall functions repeatedly\r\n\r\nOBSERVE:\r\nLocal variables recreated every execution.\r\n\r\n=========================================================\r\nIMPORTANT MEMORY UNDERSTANDING\r\n=========================================================\r\n\r\nLOCAL VARIABLES ARE TEMPORARY\r\n\r\nThey exist only during:\r\nsingle function execution.\r\n\r\n---------------------------------------------------------\r\n\r\nAFTER FUNCTION ENDS\r\n\r\nLocal variables are destroyed.\r\n\r\n---------------------------------------------------------\r\n\r\nVERY IMPORTANT\r\n\r\nThis does NOT persist:\r\n\r\nuint256 temp = 100;\r\n\r\n---------------------------------------------------------\r\n\r\nTHIS PERSISTS:\r\n\r\nstoredValue = 100;\r\n\r\nbecause storage is modified.\r\n\r\n=========================================================\r\nSTACK VS STORAGE\r\n=========================================================\r\n\r\nLOCAL UINT VARIABLES\r\n\r\nUsually stored in:\r\nEVM stack\r\n\r\n---------------------------------------------------------\r\n\r\nSTATE VARIABLES\r\n\r\nStored in:\r\nblockchain storage\r\n\r\n---------------------------------------------------------\r\n\r\nSTACK:\r\n- temporary\r\n- cheap\r\n- fast\r\n\r\nSTORAGE:\r\n- permanent\r\n- expensive\r\n- persistent\r\n\r\n=========================================================\r\nGAS OBSERVATION\r\n=========================================================\r\n\r\nLOCAL VARIABLES:\r\nCheap\r\n    515 gas\r\n---------------------------------------------------------\r\n\r\nSTORAGE WRITES:\r\nExpensive\r\n\t24325 gas\r\n---------------------------------------------------------\r\n\r\nReason:\r\nStorage modifies blockchain state permanently.\r\n\r\n=========================================================\r\nSECURITY / AUDITOR MINDSET\r\n=========================================================\r\n\r\n---------------------------------------------------------\r\n1. UNINITIALIZED VARIABLES\r\n---------------------------------------------------------\r\n\r\nAuditors verify:\r\nall local variables initialized properly.\r\n\r\n---------------------------------------------------------\r\n2. STORAGE MISUSE\r\n---------------------------------------------------------\r\n\r\nDevelopers sometimes use storage\r\nwhen temporary variable sufficient.\r\n\r\nThis wastes gas.\r\n\r\n---------------------------------------------------------\r\n3. OVERFLOW RISKS\r\n---------------------------------------------------------\r\n\r\nMath on local variables still matters.\r\n\r\nSolidity ^0.8.x checks overflow automatically.\r\n\r\n---------------------------------------------------------\r\n4. TEMPORARY LOGIC VALIDATION\r\n---------------------------------------------------------\r\n\r\nAuditors inspect:\r\n- intermediate calculations\r\n- temporary computation correctness\r\n- execution flow consistency\r\n\r\n=========================================================\r\nATTACK THINKING\r\n=========================================================\r\n\r\nATTACK SCENARIO\r\n\r\nIncorrect temporary calculations may:\r\n- manipulate balances\r\n- break reward logic\r\n- corrupt protocol state\r\n\r\n---------------------------------------------------------\r\n\r\nANOTHER RISK\r\n\r\nDeveloper may incorrectly assume:\r\nlocal variable persists after execution.\r\n\r\nThis creates logic bugs.\r\n\r\n=========================================================\r\nMINI CHALLENGE\r\n=========================================================\r\n\r\nModify contract so that:\r\n\r\n1. Create local multiplication variable\r\n2. Return multiplication result\r\n3. Do NOT modify storage\r\n\r\nBONUS:\r\nCompare gas between:\r\n- local calculation\r\n- storage write\r\n\r\n=========================================================\r\nIMPORTANT CONCEPTS LEARNED\r\n=========================================================\r\n\r\n- Local variables are temporary\r\n- Local variables do not persist\r\n- State variables use storage\r\n- Local uint variables usually use stack\r\n- Storage writes consume more gas\r\n- Local variables disappear after execution\r\n- Temporary variables useful for calculations\r\n- view/pure functions avoid storage modification\r\n- Solidity ^0.8.x protects from overflow\r\n- Auditors inspect temporary logic carefully\r\n\r\n=========================================================\r\n*/\r\n\r\n/*\r\nImplementation Review Report\r\n\r\nTitle: Correct Implementation of Local Variable Multiplication Function\r\n\r\nSeverity: Informational\r\n\r\nResult: Passed\r\n\r\nLocation:\r\n\r\nContract: LocalUintVariable\r\nFunction: calculateMul()\r\n\r\nDescription:\r\n\r\nThe function correctly implements the mini challenge requirement by using a local variable to perform multiplication of two input values and returning the result without modifying any state variables.\r\n\r\nThe variable mul is properly declared as a local variable and exists only during function execution.\r\n\r\nRequirement Check:\r\nCreate local multiplication variable → ✔ Done\r\nReturn multiplication result → ✔ Done\r\nDo NOT modify storage → ✔ Done\r\nProof of Concept:\r\n\r\nDeploy the contract.\r\n\r\nCall:\r\ncalculateMul(10, 20)\r\n\r\nResult:\r\n200\r\n\r\nCall:\r\ncalculateMul(2, 5)\r\n\r\nResult:\r\n10\r\n\r\nCall:\r\ncalculateMul(0, 99)\r\n\r\nResult:\r\n0\r\n\r\nSecurity Observation:\r\nNo storage mutation occurs\r\nNo state variables are modified\r\nFunction is safe and gas-efficient\r\nUses pure function correctly\r\nRoot Cause:\r\n\r\nNot applicable — no vulnerability found. This is a correct implementation.\r\n\r\nRecommendation:\r\n\r\nNo changes required.\r\n*/\r\n// patched code \r\n/*\r\ncontract LocalUintVariable {\r\n    function calculateMul(uint256 _a, uint256 _b) public pure returns (uint256)\r\n    {\r\n        /*\r\n            LOCAL VARIABLE\r\n\r\n            mul exists ONLY during execution.\r\n\r\n            It is NOT stored permanently\r\n            on blockchain storage.\r\n        //\r\n        uint256 mul = _a * _b;\r\n        return mul;\r\n    }\r\n}\r\n*/\r\ncontract LocalUintVariableVul {\r\n    function calculateMultiplication(\r\n        uint256 _a,\r\n        uint256 _b\r\n    )\r\n        public\r\n        pure\r\n        returns (uint256)\r\n    {\r\n        //Local variable\r\n        uint256 multiplication = _a * _b;\r\n        //Return multiplication result\r\n        return multiplication;\r\n    }    \r\n\r\n}"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			},
+			"remappings": []
+		}
+	},
+	"output": {
+		"contracts": {
+			"task16.sol": {
+				"LocalUintVariableVul": {
+					"abi": [
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_a",
+									"type": "uint256"
+								},
+								{
+									"internalType": "uint256",
+									"name": "_b",
+									"type": "uint256"
+								}
+							],
+							"name": "calculateMultiplication",
+							"outputs": [
+								{
+									"internalType": "uint256",
+									"name": "",
+									"type": "uint256"
+								}
+							],
+							"stateMutability": "pure",
+							"type": "function"
+						}
+					],
+					"devdoc": {
+						"kind": "dev",
+						"methods": {},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "    /* \"task16.sol\":10720:11059  contract LocalUintVariableVul {... */\n  mstore(0x40, 0x80)\n  callvalue\n  dup1\n  iszero\n  tag_1\n  jumpi\n  revert(0x00, 0x00)\ntag_1:\n  pop\n  dataSize(sub_0)\n  dup1\n  dataOffset(sub_0)\n  0x00\n  codecopy\n  0x00\n  return\nstop\n\nsub_0: assembly {\n        /* \"task16.sol\":10720:11059  contract LocalUintVariableVul {... */\n      mstore(0x40, 0x80)\n      callvalue\n      dup1\n      iszero\n      tag_1\n      jumpi\n      revert(0x00, 0x00)\n    tag_1:\n      pop\n      jumpi(tag_2, lt(calldatasize, 0x04))\n      shr(0xe0, calldataload(0x00))\n      dup1\n      0x11c9f69c\n      eq\n      tag_3\n      jumpi\n    tag_2:\n      revert(0x00, 0x00)\n        /* \"task16.sol\":10757:11050  function calculateMultiplication(... */\n    tag_3:\n      tag_4\n      0x04\n      dup1\n      calldatasize\n      sub\n      dup2\n      add\n      swap1\n      tag_5\n      swap2\n      swap1\n      tag_6\n      jump\t// in\n    tag_5:\n      tag_7\n      jump\t// in\n    tag_4:\n      mload(0x40)\n      tag_8\n      swap2\n      swap1\n      tag_9\n      jump\t// in\n    tag_8:\n      mload(0x40)\n      dup1\n      swap2\n      sub\n      swap1\n      return\n    tag_7:\n        /* \"task16.sol\":10887:10894  uint256 */\n      0x00\n        /* \"task16.sol\":10938:10960  uint256 multiplication */\n      0x00\n        /* \"task16.sol\":10968:10970  _b */\n      dup3\n        /* \"task16.sol\":10963:10965  _a */\n      dup5\n        /* \"task16.sol\":10963:10970  _a * _b */\n      tag_11\n      swap2\n      swap1\n      tag_12\n      jump\t// in\n    tag_11:\n        /* \"task16.sol\":10938:10970  uint256 multiplication = _a * _b */\n      swap1\n      pop\n        /* \"task16.sol\":11028:11042  multiplication */\n      dup1\n        /* \"task16.sol\":11021:11042  return multiplication */\n      swap2\n      pop\n      pop\n        /* \"task16.sol\":10757:11050  function calculateMultiplication(... */\n      swap3\n      swap2\n      pop\n      pop\n      jump\t// out\n        /* \"#utility.yul\":88:205   */\n    tag_14:\n        /* \"#utility.yul\":197:198   */\n      0x00\n        /* \"#utility.yul\":194:195   */\n      0x00\n        /* \"#utility.yul\":187:199   */\n      revert\n        /* \"#utility.yul\":334:411   */\n    tag_16:\n        /* \"#utility.yul\":371:378   */\n      0x00\n        /* \"#utility.yul\":400:405   */\n      dup2\n        /* \"#utility.yul\":389:405   */\n      swap1\n      pop\n        /* \"#utility.yul\":334:411   */\n      swap2\n      swap1\n      pop\n      jump\t// out\n        /* \"#utility.yul\":417:539   */\n    tag_17:\n        /* \"#utility.yul\":490:514   */\n      tag_27\n        /* \"#utility.yul\":508:513   */\n      dup2\n        /* \"#utility.yul\":490:514   */\n      tag_16\n      jump\t// in\n    tag_27:\n        /* \"#utility.yul\":483:488   */\n      dup2\n        /* \"#utility.yul\":480:515   */\n      eq\n        /* \"#utility.yul\":470:533   */\n      tag_28\n      jumpi\n        /* \"#utility.yul\":529:530   */\n      0x00\n        /* \"#utility.yul\":526:527   */\n      0x00\n        /* \"#utility.yul\":519:531   */\n      revert\n        /* \"#utility.yul\":470:533   */\n    tag_28:\n        /* \"#utility.yul\":417:539   */\n      pop\n      jump\t// out\n        /* \"#utility.yul\":545:684   */\n    tag_18:\n        /* \"#utility.yul\":591:596   */\n      0x00\n        /* \"#utility.yul\":629:635   */\n      dup2\n        /* \"#utility.yul\":616:636   */\n      calldataload\n        /* \"#utility.yul\":607:636   */\n      swap1\n      pop\n        /* \"#utility.yul\":645:678   */\n      tag_30\n        /* \"#utility.yul\":672:677   */\n      dup2\n        /* \"#utility.yul\":645:678   */\n      tag_17\n      jump\t// in\n    tag_30:\n        /* \"#utility.yul\":545:684   */\n      swap3\n      swap2\n      pop\n      pop\n      jump\t// out\n        /* \"#utility.yul\":690:1164   */\n    tag_6:\n        /* \"#utility.yul\":758:764   */\n      0x00\n        /* \"#utility.yul\":766:772   */\n      0x00\n        /* \"#utility.yul\":815:817   */\n      0x40\n        /* \"#utility.yul\":803:812   */\n      dup4\n        /* \"#utility.yul\":794:801   */\n      dup6\n        /* \"#utility.yul\":790:813   */\n      sub\n        /* \"#utility.yul\":786:818   */\n      slt\n        /* \"#utility.yul\":783:902   */\n      iszero\n      tag_32\n      jumpi\n        /* \"#utility.yul\":821:900   */\n      tag_33\n      tag_14\n      jump\t// in\n    tag_33:\n        /* \"#utility.yul\":783:902   */\n    tag_32:\n        /* \"#utility.yul\":941:942   */\n      0x00\n        /* \"#utility.yul\":966:1019   */\n      tag_34\n        /* \"#utility.yul\":1011:1018   */\n      dup6\n        /* \"#utility.yul\":1002:1008   */\n      dup3\n        /* \"#utility.yul\":991:1000   */\n      dup7\n        /* \"#utility.yul\":987:1009   */\n      add\n        /* \"#utility.yul\":966:1019   */\n      tag_18\n      jump\t// in\n    tag_34:\n        /* \"#utility.yul\":956:1019   */\n      swap3\n      pop\n        /* \"#utility.yul\":912:1029   */\n      pop\n        /* \"#utility.yul\":1068:1070   */\n      0x20\n        /* \"#utility.yul\":1094:1147   */\n      tag_35\n        /* \"#utility.yul\":1139:1146   */\n      dup6\n        /* \"#utility.yul\":1130:1136   */\n      dup3\n        /* \"#utility.yul\":1119:1128   */\n      dup7\n        /* \"#utility.yul\":1115:1137   */\n      add\n        /* \"#utility.yul\":1094:1147   */\n      tag_18\n      jump\t// in\n    tag_35:\n        /* \"#utility.yul\":1084:1147   */\n      swap2\n      pop\n        /* \"#utility.yul\":1039:1157   */\n      pop\n        /* \"#utility.yul\":690:1164   */\n      swap3\n      pop\n      swap3\n      swap1\n      pop\n      jump\t// out\n        /* \"#utility.yul\":1170:1288   */\n    tag_19:\n        /* \"#utility.yul\":1257:1281   */\n      tag_37\n        /* \"#utility.yul\":1275:1280   */\n      dup2\n        /* \"#utility.yul\":1257:1281   */\n      tag_16\n      jump\t// in\n    tag_37:\n        /* \"#utility.yul\":1252:1255   */\n      dup3\n        /* \"#utility.yul\":1245:1282   */\n      mstore\n        /* \"#utility.yul\":1170:1288   */\n      pop\n      pop\n      jump\t// out\n        /* \"#utility.yul\":1294:1516   */\n    tag_9:\n        /* \"#utility.yul\":1387:1391   */\n      0x00\n        /* \"#utility.yul\":1425:1427   */\n      0x20\n        /* \"#utility.yul\":1414:1423   */\n      dup3\n        /* \"#utility.yul\":1410:1428   */\n      add\n        /* \"#utility.yul\":1402:1428   */\n      swap1\n      pop\n        /* \"#utility.yul\":1438:1509   */\n      tag_39\n        /* \"#utility.yul\":1506:1507   */\n      0x00\n        /* \"#utility.yul\":1495:1504   */\n      dup4\n        /* \"#utility.yul\":1491:1508   */\n      add\n        /* \"#utility.yul\":1482:1488   */\n      dup5\n        /* \"#utility.yul\":1438:1509   */\n      tag_19\n      jump\t// in\n    tag_39:\n        /* \"#utility.yul\":1294:1516   */\n      swap3\n      swap2\n      pop\n      pop\n      jump\t// out\n        /* \"#utility.yul\":1522:1702   */\n    tag_20:\n        /* \"#utility.yul\":1570:1647   */\n      0x4e487b7100000000000000000000000000000000000000000000000000000000\n        /* \"#utility.yul\":1567:1568   */\n      0x00\n        /* \"#utility.yul\":1560:1648   */\n      mstore\n        /* \"#utility.yul\":1667:1671   */\n      0x11\n        /* \"#utility.yul\":1664:1665   */\n      0x04\n        /* \"#utility.yul\":1657:1672   */\n      mstore\n        /* \"#utility.yul\":1691:1695   */\n      0x24\n        /* \"#utility.yul\":1688:1689   */\n      0x00\n        /* \"#utility.yul\":1681:1696   */\n      revert\n        /* \"#utility.yul\":1708:2118   */\n    tag_12:\n        /* \"#utility.yul\":1748:1755   */\n      0x00\n        /* \"#utility.yul\":1771:1791   */\n      tag_42\n        /* \"#utility.yul\":1789:1790   */\n      dup3\n        /* \"#utility.yul\":1771:1791   */\n      tag_16\n      jump\t// in\n    tag_42:\n        /* \"#utility.yul\":1766:1791   */\n      swap2\n      pop\n        /* \"#utility.yul\":1805:1825   */\n      tag_43\n        /* \"#utility.yul\":1823:1824   */\n      dup4\n        /* \"#utility.yul\":1805:1825   */\n      tag_16\n      jump\t// in\n    tag_43:\n        /* \"#utility.yul\":1800:1825   */\n      swap3\n      pop\n        /* \"#utility.yul\":1860:1861   */\n      dup3\n        /* \"#utility.yul\":1857:1858   */\n      dup3\n        /* \"#utility.yul\":1853:1862   */\n      mul\n        /* \"#utility.yul\":1882:1912   */\n      tag_44\n        /* \"#utility.yul\":1900:1911   */\n      dup2\n        /* \"#utility.yul\":1882:1912   */\n      tag_16\n      jump\t// in\n    tag_44:\n        /* \"#utility.yul\":1871:1912   */\n      swap2\n      pop\n        /* \"#utility.yul\":2061:2062   */\n      dup3\n        /* \"#utility.yul\":2052:2059   */\n      dup3\n        /* \"#utility.yul\":2048:2063   */\n      div\n        /* \"#utility.yul\":2045:2046   */\n      dup5\n        /* \"#utility.yul\":2042:2064   */\n      eq\n        /* \"#utility.yul\":2022:2023   */\n      dup4\n        /* \"#utility.yul\":2015:2024   */\n      iszero\n        /* \"#utility.yul\":1995:2078   */\n      or\n        /* \"#utility.yul\":1972:2111   */\n      tag_45\n      jumpi\n        /* \"#utility.yul\":2091:2109   */\n      tag_46\n      tag_20\n      jump\t// in\n    tag_46:\n        /* \"#utility.yul\":1972:2111   */\n    tag_45:\n        /* \"#utility.yul\":1756:2118   */\n      pop\n        /* \"#utility.yul\":1708:2118   */\n      swap3\n      swap2\n      pop\n      pop\n      jump\t// out\n\n    auxdata: 0xa26469706673582212201aa3b1a3b36f3565f799e59f4165e9807c044d0f1eab134d8b3ee7f3f848135a64736f6c63430008220033\n}\n",
+						"bytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "6080604052348015600e575f5ffd5b506101b88061001c5f395ff3fe608060405234801561000f575f5ffd5b5060043610610029575f3560e01c806311c9f69c1461002d575b5f5ffd5b610047600480360381019061004291906100ae565b61005d565b60405161005491906100fb565b60405180910390f35b5f5f828461006b9190610141565b90508091505092915050565b5f5ffd5b5f819050919050565b61008d8161007b565b8114610097575f5ffd5b50565b5f813590506100a881610084565b92915050565b5f5f604083850312156100c4576100c3610077565b5b5f6100d18582860161009a565b92505060206100e28582860161009a565b9150509250929050565b6100f58161007b565b82525050565b5f60208201905061010e5f8301846100ec565b92915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601160045260245ffd5b5f61014b8261007b565b91506101568361007b565b92508282026101648161007b565b9150828204841483151761017b5761017a610114565b5b509291505056fea26469706673582212201aa3b1a3b36f3565f799e59f4165e9807c044d0f1eab134d8b3ee7f3f848135a64736f6c63430008220033",
+							"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH1 0xE JUMPI PUSH0 PUSH0 REVERT JUMPDEST POP PUSH2 0x1B8 DUP1 PUSH2 0x1C PUSH0 CODECOPY PUSH0 RETURN INVALID PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0xF JUMPI PUSH0 PUSH0 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH2 0x29 JUMPI PUSH0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x11C9F69C EQ PUSH2 0x2D JUMPI JUMPDEST PUSH0 PUSH0 REVERT JUMPDEST PUSH2 0x47 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 PUSH2 0x42 SWAP2 SWAP1 PUSH2 0xAE JUMP JUMPDEST PUSH2 0x5D JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x54 SWAP2 SWAP1 PUSH2 0xFB JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH0 PUSH0 DUP3 DUP5 PUSH2 0x6B SWAP2 SWAP1 PUSH2 0x141 JUMP JUMPDEST SWAP1 POP DUP1 SWAP2 POP POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH0 PUSH0 REVERT JUMPDEST PUSH0 DUP2 SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH2 0x8D DUP2 PUSH2 0x7B JUMP JUMPDEST DUP2 EQ PUSH2 0x97 JUMPI PUSH0 PUSH0 REVERT JUMPDEST POP JUMP JUMPDEST PUSH0 DUP2 CALLDATALOAD SWAP1 POP PUSH2 0xA8 DUP2 PUSH2 0x84 JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH0 PUSH0 PUSH1 0x40 DUP4 DUP6 SUB SLT ISZERO PUSH2 0xC4 JUMPI PUSH2 0xC3 PUSH2 0x77 JUMP JUMPDEST JUMPDEST PUSH0 PUSH2 0xD1 DUP6 DUP3 DUP7 ADD PUSH2 0x9A JUMP JUMPDEST SWAP3 POP POP PUSH1 0x20 PUSH2 0xE2 DUP6 DUP3 DUP7 ADD PUSH2 0x9A JUMP JUMPDEST SWAP2 POP POP SWAP3 POP SWAP3 SWAP1 POP JUMP JUMPDEST PUSH2 0xF5 DUP2 PUSH2 0x7B JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x10E PUSH0 DUP4 ADD DUP5 PUSH2 0xEC JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH32 0x4E487B7100000000000000000000000000000000000000000000000000000000 PUSH0 MSTORE PUSH1 0x11 PUSH1 0x4 MSTORE PUSH1 0x24 PUSH0 REVERT JUMPDEST PUSH0 PUSH2 0x14B DUP3 PUSH2 0x7B JUMP JUMPDEST SWAP2 POP PUSH2 0x156 DUP4 PUSH2 0x7B JUMP JUMPDEST SWAP3 POP DUP3 DUP3 MUL PUSH2 0x164 DUP2 PUSH2 0x7B JUMP JUMPDEST SWAP2 POP DUP3 DUP3 DIV DUP5 EQ DUP4 ISZERO OR PUSH2 0x17B JUMPI PUSH2 0x17A PUSH2 0x114 JUMP JUMPDEST JUMPDEST POP SWAP3 SWAP2 POP POP JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 BYTE LOG3 0xB1 LOG3 0xB3 PUSH16 0x3565F799E59F4165E9807C044D0F1EAB SGT 0x4D DUP12 RETURNDATACOPY SWAPN 0xF3 EXTCALL BASEFEE SGT GAS PUSH5 0x736F6C6343 STOP ADDMOD 0x22 STOP CALLER ",
+							"sourceMap": "10720:339:0:-:0;;;;;;;;;;;;;;;;;;;"
+						},
+						"deployedBytecode": {
+							"functionDebugData": {
+								"@calculateMultiplication_19": {
+									"entryPoint": 93,
+									"id": 19,
+									"parameterSlots": 2,
+									"returnSlots": 1
+								},
+								"abi_decode_t_uint256": {
+									"entryPoint": 154,
+									"id": null,
+									"parameterSlots": 2,
+									"returnSlots": 1
+								},
+								"abi_decode_tuple_t_uint256t_uint256": {
+									"entryPoint": 174,
+									"id": null,
+									"parameterSlots": 2,
+									"returnSlots": 2
+								},
+								"abi_encode_t_uint256_to_t_uint256_fromStack": {
+									"entryPoint": 236,
+									"id": null,
+									"parameterSlots": 2,
+									"returnSlots": 0
+								},
+								"abi_encode_tuple_t_uint256__to_t_uint256__fromStack_reversed": {
+									"entryPoint": 251,
+									"id": null,
+									"parameterSlots": 2,
+									"returnSlots": 1
+								},
+								"allocate_unbounded": {
+									"entryPoint": null,
+									"id": null,
+									"parameterSlots": 0,
+									"returnSlots": 1
+								},
+								"checked_mul_t_uint256": {
+									"entryPoint": 321,
+									"id": null,
+									"parameterSlots": 2,
+									"returnSlots": 1
+								},
+								"cleanup_t_uint256": {
+									"entryPoint": 123,
+									"id": null,
+									"parameterSlots": 1,
+									"returnSlots": 1
+								},
+								"panic_error_0x11": {
+									"entryPoint": 276,
+									"id": null,
+									"parameterSlots": 0,
+									"returnSlots": 0
+								},
+								"revert_error_c1322bf8034eace5e0b5c7295db60986aa89aae5e0ea0873e4689e076861a5db": {
+									"entryPoint": null,
+									"id": null,
+									"parameterSlots": 0,
+									"returnSlots": 0
+								},
+								"revert_error_dbdddcbe895c83990c08b3492a0e83918d802a52331272ac6fdb6a7c4aea3b1b": {
+									"entryPoint": 119,
+									"id": null,
+									"parameterSlots": 0,
+									"returnSlots": 0
+								},
+								"validator_revert_t_uint256": {
+									"entryPoint": 132,
+									"id": null,
+									"parameterSlots": 1,
+									"returnSlots": 0
+								}
+							},
+							"generatedSources": [
+								{
+									"ast": {
+										"nativeSrc": "0:2121:1",
+										"nodeType": "YulBlock",
+										"src": "0:2121:1",
+										"statements": [
+											{
+												"body": {
+													"nativeSrc": "47:35:1",
+													"nodeType": "YulBlock",
+													"src": "47:35:1",
+													"statements": [
+														{
+															"nativeSrc": "57:19:1",
+															"nodeType": "YulAssignment",
+															"src": "57:19:1",
+															"value": {
+																"arguments": [
+																	{
+																		"kind": "number",
+																		"nativeSrc": "73:2:1",
+																		"nodeType": "YulLiteral",
+																		"src": "73:2:1",
+																		"type": "",
+																		"value": "64"
+																	}
+																],
+																"functionName": {
+																	"name": "mload",
+																	"nativeSrc": "67:5:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "67:5:1"
+																},
+																"nativeSrc": "67:9:1",
+																"nodeType": "YulFunctionCall",
+																"src": "67:9:1"
+															},
+															"variableNames": [
+																{
+																	"name": "memPtr",
+																	"nativeSrc": "57:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "57:6:1"
+																}
+															]
+														}
+													]
+												},
+												"name": "allocate_unbounded",
+												"nativeSrc": "7:75:1",
+												"nodeType": "YulFunctionDefinition",
+												"returnVariables": [
+													{
+														"name": "memPtr",
+														"nativeSrc": "40:6:1",
+														"nodeType": "YulTypedName",
+														"src": "40:6:1",
+														"type": ""
+													}
+												],
+												"src": "7:75:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "177:28:1",
+													"nodeType": "YulBlock",
+													"src": "177:28:1",
+													"statements": [
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"kind": "number",
+																		"nativeSrc": "194:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "194:1:1",
+																		"type": "",
+																		"value": "0"
+																	},
+																	{
+																		"kind": "number",
+																		"nativeSrc": "197:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "197:1:1",
+																		"type": "",
+																		"value": "0"
+																	}
+																],
+																"functionName": {
+																	"name": "revert",
+																	"nativeSrc": "187:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "187:6:1"
+																},
+																"nativeSrc": "187:12:1",
+																"nodeType": "YulFunctionCall",
+																"src": "187:12:1"
+															},
+															"nativeSrc": "187:12:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "187:12:1"
+														}
+													]
+												},
+												"name": "revert_error_dbdddcbe895c83990c08b3492a0e83918d802a52331272ac6fdb6a7c4aea3b1b",
+												"nativeSrc": "88:117:1",
+												"nodeType": "YulFunctionDefinition",
+												"src": "88:117:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "300:28:1",
+													"nodeType": "YulBlock",
+													"src": "300:28:1",
+													"statements": [
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"kind": "number",
+																		"nativeSrc": "317:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "317:1:1",
+																		"type": "",
+																		"value": "0"
+																	},
+																	{
+																		"kind": "number",
+																		"nativeSrc": "320:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "320:1:1",
+																		"type": "",
+																		"value": "0"
+																	}
+																],
+																"functionName": {
+																	"name": "revert",
+																	"nativeSrc": "310:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "310:6:1"
+																},
+																"nativeSrc": "310:12:1",
+																"nodeType": "YulFunctionCall",
+																"src": "310:12:1"
+															},
+															"nativeSrc": "310:12:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "310:12:1"
+														}
+													]
+												},
+												"name": "revert_error_c1322bf8034eace5e0b5c7295db60986aa89aae5e0ea0873e4689e076861a5db",
+												"nativeSrc": "211:117:1",
+												"nodeType": "YulFunctionDefinition",
+												"src": "211:117:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "379:32:1",
+													"nodeType": "YulBlock",
+													"src": "379:32:1",
+													"statements": [
+														{
+															"nativeSrc": "389:16:1",
+															"nodeType": "YulAssignment",
+															"src": "389:16:1",
+															"value": {
+																"name": "value",
+																"nativeSrc": "400:5:1",
+																"nodeType": "YulIdentifier",
+																"src": "400:5:1"
+															},
+															"variableNames": [
+																{
+																	"name": "cleaned",
+																	"nativeSrc": "389:7:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "389:7:1"
+																}
+															]
+														}
+													]
+												},
+												"name": "cleanup_t_uint256",
+												"nativeSrc": "334:77:1",
+												"nodeType": "YulFunctionDefinition",
+												"parameters": [
+													{
+														"name": "value",
+														"nativeSrc": "361:5:1",
+														"nodeType": "YulTypedName",
+														"src": "361:5:1",
+														"type": ""
+													}
+												],
+												"returnVariables": [
+													{
+														"name": "cleaned",
+														"nativeSrc": "371:7:1",
+														"nodeType": "YulTypedName",
+														"src": "371:7:1",
+														"type": ""
+													}
+												],
+												"src": "334:77:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "460:79:1",
+													"nodeType": "YulBlock",
+													"src": "460:79:1",
+													"statements": [
+														{
+															"body": {
+																"nativeSrc": "517:16:1",
+																"nodeType": "YulBlock",
+																"src": "517:16:1",
+																"statements": [
+																	{
+																		"expression": {
+																			"arguments": [
+																				{
+																					"kind": "number",
+																					"nativeSrc": "526:1:1",
+																					"nodeType": "YulLiteral",
+																					"src": "526:1:1",
+																					"type": "",
+																					"value": "0"
+																				},
+																				{
+																					"kind": "number",
+																					"nativeSrc": "529:1:1",
+																					"nodeType": "YulLiteral",
+																					"src": "529:1:1",
+																					"type": "",
+																					"value": "0"
+																				}
+																			],
+																			"functionName": {
+																				"name": "revert",
+																				"nativeSrc": "519:6:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "519:6:1"
+																			},
+																			"nativeSrc": "519:12:1",
+																			"nodeType": "YulFunctionCall",
+																			"src": "519:12:1"
+																		},
+																		"nativeSrc": "519:12:1",
+																		"nodeType": "YulExpressionStatement",
+																		"src": "519:12:1"
+																	}
+																]
+															},
+															"condition": {
+																"arguments": [
+																	{
+																		"arguments": [
+																			{
+																				"name": "value",
+																				"nativeSrc": "483:5:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "483:5:1"
+																			},
+																			{
+																				"arguments": [
+																					{
+																						"name": "value",
+																						"nativeSrc": "508:5:1",
+																						"nodeType": "YulIdentifier",
+																						"src": "508:5:1"
+																					}
+																				],
+																				"functionName": {
+																					"name": "cleanup_t_uint256",
+																					"nativeSrc": "490:17:1",
+																					"nodeType": "YulIdentifier",
+																					"src": "490:17:1"
+																				},
+																				"nativeSrc": "490:24:1",
+																				"nodeType": "YulFunctionCall",
+																				"src": "490:24:1"
+																			}
+																		],
+																		"functionName": {
+																			"name": "eq",
+																			"nativeSrc": "480:2:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "480:2:1"
+																		},
+																		"nativeSrc": "480:35:1",
+																		"nodeType": "YulFunctionCall",
+																		"src": "480:35:1"
+																	}
+																],
+																"functionName": {
+																	"name": "iszero",
+																	"nativeSrc": "473:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "473:6:1"
+																},
+																"nativeSrc": "473:43:1",
+																"nodeType": "YulFunctionCall",
+																"src": "473:43:1"
+															},
+															"nativeSrc": "470:63:1",
+															"nodeType": "YulIf",
+															"src": "470:63:1"
+														}
+													]
+												},
+												"name": "validator_revert_t_uint256",
+												"nativeSrc": "417:122:1",
+												"nodeType": "YulFunctionDefinition",
+												"parameters": [
+													{
+														"name": "value",
+														"nativeSrc": "453:5:1",
+														"nodeType": "YulTypedName",
+														"src": "453:5:1",
+														"type": ""
+													}
+												],
+												"src": "417:122:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "597:87:1",
+													"nodeType": "YulBlock",
+													"src": "597:87:1",
+													"statements": [
+														{
+															"nativeSrc": "607:29:1",
+															"nodeType": "YulAssignment",
+															"src": "607:29:1",
+															"value": {
+																"arguments": [
+																	{
+																		"name": "offset",
+																		"nativeSrc": "629:6:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "629:6:1"
+																	}
+																],
+																"functionName": {
+																	"name": "calldataload",
+																	"nativeSrc": "616:12:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "616:12:1"
+																},
+																"nativeSrc": "616:20:1",
+																"nodeType": "YulFunctionCall",
+																"src": "616:20:1"
+															},
+															"variableNames": [
+																{
+																	"name": "value",
+																	"nativeSrc": "607:5:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "607:5:1"
+																}
+															]
+														},
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"name": "value",
+																		"nativeSrc": "672:5:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "672:5:1"
+																	}
+																],
+																"functionName": {
+																	"name": "validator_revert_t_uint256",
+																	"nativeSrc": "645:26:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "645:26:1"
+																},
+																"nativeSrc": "645:33:1",
+																"nodeType": "YulFunctionCall",
+																"src": "645:33:1"
+															},
+															"nativeSrc": "645:33:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "645:33:1"
+														}
+													]
+												},
+												"name": "abi_decode_t_uint256",
+												"nativeSrc": "545:139:1",
+												"nodeType": "YulFunctionDefinition",
+												"parameters": [
+													{
+														"name": "offset",
+														"nativeSrc": "575:6:1",
+														"nodeType": "YulTypedName",
+														"src": "575:6:1",
+														"type": ""
+													},
+													{
+														"name": "end",
+														"nativeSrc": "583:3:1",
+														"nodeType": "YulTypedName",
+														"src": "583:3:1",
+														"type": ""
+													}
+												],
+												"returnVariables": [
+													{
+														"name": "value",
+														"nativeSrc": "591:5:1",
+														"nodeType": "YulTypedName",
+														"src": "591:5:1",
+														"type": ""
+													}
+												],
+												"src": "545:139:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "773:391:1",
+													"nodeType": "YulBlock",
+													"src": "773:391:1",
+													"statements": [
+														{
+															"body": {
+																"nativeSrc": "819:83:1",
+																"nodeType": "YulBlock",
+																"src": "819:83:1",
+																"statements": [
+																	{
+																		"expression": {
+																			"arguments": [],
+																			"functionName": {
+																				"name": "revert_error_dbdddcbe895c83990c08b3492a0e83918d802a52331272ac6fdb6a7c4aea3b1b",
+																				"nativeSrc": "821:77:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "821:77:1"
+																			},
+																			"nativeSrc": "821:79:1",
+																			"nodeType": "YulFunctionCall",
+																			"src": "821:79:1"
+																		},
+																		"nativeSrc": "821:79:1",
+																		"nodeType": "YulExpressionStatement",
+																		"src": "821:79:1"
+																	}
+																]
+															},
+															"condition": {
+																"arguments": [
+																	{
+																		"arguments": [
+																			{
+																				"name": "dataEnd",
+																				"nativeSrc": "794:7:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "794:7:1"
+																			},
+																			{
+																				"name": "headStart",
+																				"nativeSrc": "803:9:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "803:9:1"
+																			}
+																		],
+																		"functionName": {
+																			"name": "sub",
+																			"nativeSrc": "790:3:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "790:3:1"
+																		},
+																		"nativeSrc": "790:23:1",
+																		"nodeType": "YulFunctionCall",
+																		"src": "790:23:1"
+																	},
+																	{
+																		"kind": "number",
+																		"nativeSrc": "815:2:1",
+																		"nodeType": "YulLiteral",
+																		"src": "815:2:1",
+																		"type": "",
+																		"value": "64"
+																	}
+																],
+																"functionName": {
+																	"name": "slt",
+																	"nativeSrc": "786:3:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "786:3:1"
+																},
+																"nativeSrc": "786:32:1",
+																"nodeType": "YulFunctionCall",
+																"src": "786:32:1"
+															},
+															"nativeSrc": "783:119:1",
+															"nodeType": "YulIf",
+															"src": "783:119:1"
+														},
+														{
+															"nativeSrc": "912:117:1",
+															"nodeType": "YulBlock",
+															"src": "912:117:1",
+															"statements": [
+																{
+																	"nativeSrc": "927:15:1",
+																	"nodeType": "YulVariableDeclaration",
+																	"src": "927:15:1",
+																	"value": {
+																		"kind": "number",
+																		"nativeSrc": "941:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "941:1:1",
+																		"type": "",
+																		"value": "0"
+																	},
+																	"variables": [
+																		{
+																			"name": "offset",
+																			"nativeSrc": "931:6:1",
+																			"nodeType": "YulTypedName",
+																			"src": "931:6:1",
+																			"type": ""
+																		}
+																	]
+																},
+																{
+																	"nativeSrc": "956:63:1",
+																	"nodeType": "YulAssignment",
+																	"src": "956:63:1",
+																	"value": {
+																		"arguments": [
+																			{
+																				"arguments": [
+																					{
+																						"name": "headStart",
+																						"nativeSrc": "991:9:1",
+																						"nodeType": "YulIdentifier",
+																						"src": "991:9:1"
+																					},
+																					{
+																						"name": "offset",
+																						"nativeSrc": "1002:6:1",
+																						"nodeType": "YulIdentifier",
+																						"src": "1002:6:1"
+																					}
+																				],
+																				"functionName": {
+																					"name": "add",
+																					"nativeSrc": "987:3:1",
+																					"nodeType": "YulIdentifier",
+																					"src": "987:3:1"
+																				},
+																				"nativeSrc": "987:22:1",
+																				"nodeType": "YulFunctionCall",
+																				"src": "987:22:1"
+																			},
+																			{
+																				"name": "dataEnd",
+																				"nativeSrc": "1011:7:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "1011:7:1"
+																			}
+																		],
+																		"functionName": {
+																			"name": "abi_decode_t_uint256",
+																			"nativeSrc": "966:20:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "966:20:1"
+																		},
+																		"nativeSrc": "966:53:1",
+																		"nodeType": "YulFunctionCall",
+																		"src": "966:53:1"
+																	},
+																	"variableNames": [
+																		{
+																			"name": "value0",
+																			"nativeSrc": "956:6:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "956:6:1"
+																		}
+																	]
+																}
+															]
+														},
+														{
+															"nativeSrc": "1039:118:1",
+															"nodeType": "YulBlock",
+															"src": "1039:118:1",
+															"statements": [
+																{
+																	"nativeSrc": "1054:16:1",
+																	"nodeType": "YulVariableDeclaration",
+																	"src": "1054:16:1",
+																	"value": {
+																		"kind": "number",
+																		"nativeSrc": "1068:2:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1068:2:1",
+																		"type": "",
+																		"value": "32"
+																	},
+																	"variables": [
+																		{
+																			"name": "offset",
+																			"nativeSrc": "1058:6:1",
+																			"nodeType": "YulTypedName",
+																			"src": "1058:6:1",
+																			"type": ""
+																		}
+																	]
+																},
+																{
+																	"nativeSrc": "1084:63:1",
+																	"nodeType": "YulAssignment",
+																	"src": "1084:63:1",
+																	"value": {
+																		"arguments": [
+																			{
+																				"arguments": [
+																					{
+																						"name": "headStart",
+																						"nativeSrc": "1119:9:1",
+																						"nodeType": "YulIdentifier",
+																						"src": "1119:9:1"
+																					},
+																					{
+																						"name": "offset",
+																						"nativeSrc": "1130:6:1",
+																						"nodeType": "YulIdentifier",
+																						"src": "1130:6:1"
+																					}
+																				],
+																				"functionName": {
+																					"name": "add",
+																					"nativeSrc": "1115:3:1",
+																					"nodeType": "YulIdentifier",
+																					"src": "1115:3:1"
+																				},
+																				"nativeSrc": "1115:22:1",
+																				"nodeType": "YulFunctionCall",
+																				"src": "1115:22:1"
+																			},
+																			{
+																				"name": "dataEnd",
+																				"nativeSrc": "1139:7:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "1139:7:1"
+																			}
+																		],
+																		"functionName": {
+																			"name": "abi_decode_t_uint256",
+																			"nativeSrc": "1094:20:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "1094:20:1"
+																		},
+																		"nativeSrc": "1094:53:1",
+																		"nodeType": "YulFunctionCall",
+																		"src": "1094:53:1"
+																	},
+																	"variableNames": [
+																		{
+																			"name": "value1",
+																			"nativeSrc": "1084:6:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "1084:6:1"
+																		}
+																	]
+																}
+															]
+														}
+													]
+												},
+												"name": "abi_decode_tuple_t_uint256t_uint256",
+												"nativeSrc": "690:474:1",
+												"nodeType": "YulFunctionDefinition",
+												"parameters": [
+													{
+														"name": "headStart",
+														"nativeSrc": "735:9:1",
+														"nodeType": "YulTypedName",
+														"src": "735:9:1",
+														"type": ""
+													},
+													{
+														"name": "dataEnd",
+														"nativeSrc": "746:7:1",
+														"nodeType": "YulTypedName",
+														"src": "746:7:1",
+														"type": ""
+													}
+												],
+												"returnVariables": [
+													{
+														"name": "value0",
+														"nativeSrc": "758:6:1",
+														"nodeType": "YulTypedName",
+														"src": "758:6:1",
+														"type": ""
+													},
+													{
+														"name": "value1",
+														"nativeSrc": "766:6:1",
+														"nodeType": "YulTypedName",
+														"src": "766:6:1",
+														"type": ""
+													}
+												],
+												"src": "690:474:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "1235:53:1",
+													"nodeType": "YulBlock",
+													"src": "1235:53:1",
+													"statements": [
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"name": "pos",
+																		"nativeSrc": "1252:3:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1252:3:1"
+																	},
+																	{
+																		"arguments": [
+																			{
+																				"name": "value",
+																				"nativeSrc": "1275:5:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "1275:5:1"
+																			}
+																		],
+																		"functionName": {
+																			"name": "cleanup_t_uint256",
+																			"nativeSrc": "1257:17:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "1257:17:1"
+																		},
+																		"nativeSrc": "1257:24:1",
+																		"nodeType": "YulFunctionCall",
+																		"src": "1257:24:1"
+																	}
+																],
+																"functionName": {
+																	"name": "mstore",
+																	"nativeSrc": "1245:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1245:6:1"
+																},
+																"nativeSrc": "1245:37:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1245:37:1"
+															},
+															"nativeSrc": "1245:37:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "1245:37:1"
+														}
+													]
+												},
+												"name": "abi_encode_t_uint256_to_t_uint256_fromStack",
+												"nativeSrc": "1170:118:1",
+												"nodeType": "YulFunctionDefinition",
+												"parameters": [
+													{
+														"name": "value",
+														"nativeSrc": "1223:5:1",
+														"nodeType": "YulTypedName",
+														"src": "1223:5:1",
+														"type": ""
+													},
+													{
+														"name": "pos",
+														"nativeSrc": "1230:3:1",
+														"nodeType": "YulTypedName",
+														"src": "1230:3:1",
+														"type": ""
+													}
+												],
+												"src": "1170:118:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "1392:124:1",
+													"nodeType": "YulBlock",
+													"src": "1392:124:1",
+													"statements": [
+														{
+															"nativeSrc": "1402:26:1",
+															"nodeType": "YulAssignment",
+															"src": "1402:26:1",
+															"value": {
+																"arguments": [
+																	{
+																		"name": "headStart",
+																		"nativeSrc": "1414:9:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1414:9:1"
+																	},
+																	{
+																		"kind": "number",
+																		"nativeSrc": "1425:2:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1425:2:1",
+																		"type": "",
+																		"value": "32"
+																	}
+																],
+																"functionName": {
+																	"name": "add",
+																	"nativeSrc": "1410:3:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1410:3:1"
+																},
+																"nativeSrc": "1410:18:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1410:18:1"
+															},
+															"variableNames": [
+																{
+																	"name": "tail",
+																	"nativeSrc": "1402:4:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1402:4:1"
+																}
+															]
+														},
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"name": "value0",
+																		"nativeSrc": "1482:6:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1482:6:1"
+																	},
+																	{
+																		"arguments": [
+																			{
+																				"name": "headStart",
+																				"nativeSrc": "1495:9:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "1495:9:1"
+																			},
+																			{
+																				"kind": "number",
+																				"nativeSrc": "1506:1:1",
+																				"nodeType": "YulLiteral",
+																				"src": "1506:1:1",
+																				"type": "",
+																				"value": "0"
+																			}
+																		],
+																		"functionName": {
+																			"name": "add",
+																			"nativeSrc": "1491:3:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "1491:3:1"
+																		},
+																		"nativeSrc": "1491:17:1",
+																		"nodeType": "YulFunctionCall",
+																		"src": "1491:17:1"
+																	}
+																],
+																"functionName": {
+																	"name": "abi_encode_t_uint256_to_t_uint256_fromStack",
+																	"nativeSrc": "1438:43:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1438:43:1"
+																},
+																"nativeSrc": "1438:71:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1438:71:1"
+															},
+															"nativeSrc": "1438:71:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "1438:71:1"
+														}
+													]
+												},
+												"name": "abi_encode_tuple_t_uint256__to_t_uint256__fromStack_reversed",
+												"nativeSrc": "1294:222:1",
+												"nodeType": "YulFunctionDefinition",
+												"parameters": [
+													{
+														"name": "headStart",
+														"nativeSrc": "1364:9:1",
+														"nodeType": "YulTypedName",
+														"src": "1364:9:1",
+														"type": ""
+													},
+													{
+														"name": "value0",
+														"nativeSrc": "1376:6:1",
+														"nodeType": "YulTypedName",
+														"src": "1376:6:1",
+														"type": ""
+													}
+												],
+												"returnVariables": [
+													{
+														"name": "tail",
+														"nativeSrc": "1387:4:1",
+														"nodeType": "YulTypedName",
+														"src": "1387:4:1",
+														"type": ""
+													}
+												],
+												"src": "1294:222:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "1550:152:1",
+													"nodeType": "YulBlock",
+													"src": "1550:152:1",
+													"statements": [
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"kind": "number",
+																		"nativeSrc": "1567:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1567:1:1",
+																		"type": "",
+																		"value": "0"
+																	},
+																	{
+																		"kind": "number",
+																		"nativeSrc": "1570:77:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1570:77:1",
+																		"type": "",
+																		"value": "35408467139433450592217433187231851964531694900788300625387963629091585785856"
+																	}
+																],
+																"functionName": {
+																	"name": "mstore",
+																	"nativeSrc": "1560:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1560:6:1"
+																},
+																"nativeSrc": "1560:88:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1560:88:1"
+															},
+															"nativeSrc": "1560:88:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "1560:88:1"
+														},
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"kind": "number",
+																		"nativeSrc": "1664:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1664:1:1",
+																		"type": "",
+																		"value": "4"
+																	},
+																	{
+																		"kind": "number",
+																		"nativeSrc": "1667:4:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1667:4:1",
+																		"type": "",
+																		"value": "0x11"
+																	}
+																],
+																"functionName": {
+																	"name": "mstore",
+																	"nativeSrc": "1657:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1657:6:1"
+																},
+																"nativeSrc": "1657:15:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1657:15:1"
+															},
+															"nativeSrc": "1657:15:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "1657:15:1"
+														},
+														{
+															"expression": {
+																"arguments": [
+																	{
+																		"kind": "number",
+																		"nativeSrc": "1688:1:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1688:1:1",
+																		"type": "",
+																		"value": "0"
+																	},
+																	{
+																		"kind": "number",
+																		"nativeSrc": "1691:4:1",
+																		"nodeType": "YulLiteral",
+																		"src": "1691:4:1",
+																		"type": "",
+																		"value": "0x24"
+																	}
+																],
+																"functionName": {
+																	"name": "revert",
+																	"nativeSrc": "1681:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1681:6:1"
+																},
+																"nativeSrc": "1681:15:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1681:15:1"
+															},
+															"nativeSrc": "1681:15:1",
+															"nodeType": "YulExpressionStatement",
+															"src": "1681:15:1"
+														}
+													]
+												},
+												"name": "panic_error_0x11",
+												"nativeSrc": "1522:180:1",
+												"nodeType": "YulFunctionDefinition",
+												"src": "1522:180:1"
+											},
+											{
+												"body": {
+													"nativeSrc": "1756:362:1",
+													"nodeType": "YulBlock",
+													"src": "1756:362:1",
+													"statements": [
+														{
+															"nativeSrc": "1766:25:1",
+															"nodeType": "YulAssignment",
+															"src": "1766:25:1",
+															"value": {
+																"arguments": [
+																	{
+																		"name": "x",
+																		"nativeSrc": "1789:1:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1789:1:1"
+																	}
+																],
+																"functionName": {
+																	"name": "cleanup_t_uint256",
+																	"nativeSrc": "1771:17:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1771:17:1"
+																},
+																"nativeSrc": "1771:20:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1771:20:1"
+															},
+															"variableNames": [
+																{
+																	"name": "x",
+																	"nativeSrc": "1766:1:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1766:1:1"
+																}
+															]
+														},
+														{
+															"nativeSrc": "1800:25:1",
+															"nodeType": "YulAssignment",
+															"src": "1800:25:1",
+															"value": {
+																"arguments": [
+																	{
+																		"name": "y",
+																		"nativeSrc": "1823:1:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1823:1:1"
+																	}
+																],
+																"functionName": {
+																	"name": "cleanup_t_uint256",
+																	"nativeSrc": "1805:17:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1805:17:1"
+																},
+																"nativeSrc": "1805:20:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1805:20:1"
+															},
+															"variableNames": [
+																{
+																	"name": "y",
+																	"nativeSrc": "1800:1:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1800:1:1"
+																}
+															]
+														},
+														{
+															"nativeSrc": "1834:28:1",
+															"nodeType": "YulVariableDeclaration",
+															"src": "1834:28:1",
+															"value": {
+																"arguments": [
+																	{
+																		"name": "x",
+																		"nativeSrc": "1857:1:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1857:1:1"
+																	},
+																	{
+																		"name": "y",
+																		"nativeSrc": "1860:1:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1860:1:1"
+																	}
+																],
+																"functionName": {
+																	"name": "mul",
+																	"nativeSrc": "1853:3:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1853:3:1"
+																},
+																"nativeSrc": "1853:9:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1853:9:1"
+															},
+															"variables": [
+																{
+																	"name": "product_raw",
+																	"nativeSrc": "1838:11:1",
+																	"nodeType": "YulTypedName",
+																	"src": "1838:11:1",
+																	"type": ""
+																}
+															]
+														},
+														{
+															"nativeSrc": "1871:41:1",
+															"nodeType": "YulAssignment",
+															"src": "1871:41:1",
+															"value": {
+																"arguments": [
+																	{
+																		"name": "product_raw",
+																		"nativeSrc": "1900:11:1",
+																		"nodeType": "YulIdentifier",
+																		"src": "1900:11:1"
+																	}
+																],
+																"functionName": {
+																	"name": "cleanup_t_uint256",
+																	"nativeSrc": "1882:17:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1882:17:1"
+																},
+																"nativeSrc": "1882:30:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1882:30:1"
+															},
+															"variableNames": [
+																{
+																	"name": "product",
+																	"nativeSrc": "1871:7:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1871:7:1"
+																}
+															]
+														},
+														{
+															"body": {
+																"nativeSrc": "2089:22:1",
+																"nodeType": "YulBlock",
+																"src": "2089:22:1",
+																"statements": [
+																	{
+																		"expression": {
+																			"arguments": [],
+																			"functionName": {
+																				"name": "panic_error_0x11",
+																				"nativeSrc": "2091:16:1",
+																				"nodeType": "YulIdentifier",
+																				"src": "2091:16:1"
+																			},
+																			"nativeSrc": "2091:18:1",
+																			"nodeType": "YulFunctionCall",
+																			"src": "2091:18:1"
+																		},
+																		"nativeSrc": "2091:18:1",
+																		"nodeType": "YulExpressionStatement",
+																		"src": "2091:18:1"
+																	}
+																]
+															},
+															"condition": {
+																"arguments": [
+																	{
+																		"arguments": [
+																			{
+																				"arguments": [
+																					{
+																						"name": "x",
+																						"nativeSrc": "2022:1:1",
+																						"nodeType": "YulIdentifier",
+																						"src": "2022:1:1"
+																					}
+																				],
+																				"functionName": {
+																					"name": "iszero",
+																					"nativeSrc": "2015:6:1",
+																					"nodeType": "YulIdentifier",
+																					"src": "2015:6:1"
+																				},
+																				"nativeSrc": "2015:9:1",
+																				"nodeType": "YulFunctionCall",
+																				"src": "2015:9:1"
+																			},
+																			{
+																				"arguments": [
+																					{
+																						"name": "y",
+																						"nativeSrc": "2045:1:1",
+																						"nodeType": "YulIdentifier",
+																						"src": "2045:1:1"
+																					},
+																					{
+																						"arguments": [
+																							{
+																								"name": "product",
+																								"nativeSrc": "2052:7:1",
+																								"nodeType": "YulIdentifier",
+																								"src": "2052:7:1"
+																							},
+																							{
+																								"name": "x",
+																								"nativeSrc": "2061:1:1",
+																								"nodeType": "YulIdentifier",
+																								"src": "2061:1:1"
+																							}
+																						],
+																						"functionName": {
+																							"name": "div",
+																							"nativeSrc": "2048:3:1",
+																							"nodeType": "YulIdentifier",
+																							"src": "2048:3:1"
+																						},
+																						"nativeSrc": "2048:15:1",
+																						"nodeType": "YulFunctionCall",
+																						"src": "2048:15:1"
+																					}
+																				],
+																				"functionName": {
+																					"name": "eq",
+																					"nativeSrc": "2042:2:1",
+																					"nodeType": "YulIdentifier",
+																					"src": "2042:2:1"
+																				},
+																				"nativeSrc": "2042:22:1",
+																				"nodeType": "YulFunctionCall",
+																				"src": "2042:22:1"
+																			}
+																		],
+																		"functionName": {
+																			"name": "or",
+																			"nativeSrc": "1995:2:1",
+																			"nodeType": "YulIdentifier",
+																			"src": "1995:2:1"
+																		},
+																		"nativeSrc": "1995:83:1",
+																		"nodeType": "YulFunctionCall",
+																		"src": "1995:83:1"
+																	}
+																],
+																"functionName": {
+																	"name": "iszero",
+																	"nativeSrc": "1975:6:1",
+																	"nodeType": "YulIdentifier",
+																	"src": "1975:6:1"
+																},
+																"nativeSrc": "1975:113:1",
+																"nodeType": "YulFunctionCall",
+																"src": "1975:113:1"
+															},
+															"nativeSrc": "1972:139:1",
+															"nodeType": "YulIf",
+															"src": "1972:139:1"
+														}
+													]
+												},
+												"name": "checked_mul_t_uint256",
+												"nativeSrc": "1708:410:1",
+												"nodeType": "YulFunctionDefinition",
+												"parameters": [
+													{
+														"name": "x",
+														"nativeSrc": "1739:1:1",
+														"nodeType": "YulTypedName",
+														"src": "1739:1:1",
+														"type": ""
+													},
+													{
+														"name": "y",
+														"nativeSrc": "1742:1:1",
+														"nodeType": "YulTypedName",
+														"src": "1742:1:1",
+														"type": ""
+													}
+												],
+												"returnVariables": [
+													{
+														"name": "product",
+														"nativeSrc": "1748:7:1",
+														"nodeType": "YulTypedName",
+														"src": "1748:7:1",
+														"type": ""
+													}
+												],
+												"src": "1708:410:1"
+											}
+										]
+									},
+									"contents": "{\n\n    function allocate_unbounded() -> memPtr {\n        memPtr := mload(64)\n    }\n\n    function revert_error_dbdddcbe895c83990c08b3492a0e83918d802a52331272ac6fdb6a7c4aea3b1b() {\n        revert(0, 0)\n    }\n\n    function revert_error_c1322bf8034eace5e0b5c7295db60986aa89aae5e0ea0873e4689e076861a5db() {\n        revert(0, 0)\n    }\n\n    function cleanup_t_uint256(value) -> cleaned {\n        cleaned := value\n    }\n\n    function validator_revert_t_uint256(value) {\n        if iszero(eq(value, cleanup_t_uint256(value))) { revert(0, 0) }\n    }\n\n    function abi_decode_t_uint256(offset, end) -> value {\n        value := calldataload(offset)\n        validator_revert_t_uint256(value)\n    }\n\n    function abi_decode_tuple_t_uint256t_uint256(headStart, dataEnd) -> value0, value1 {\n        if slt(sub(dataEnd, headStart), 64) { revert_error_dbdddcbe895c83990c08b3492a0e83918d802a52331272ac6fdb6a7c4aea3b1b() }\n\n        {\n\n            let offset := 0\n\n            value0 := abi_decode_t_uint256(add(headStart, offset), dataEnd)\n        }\n\n        {\n\n            let offset := 32\n\n            value1 := abi_decode_t_uint256(add(headStart, offset), dataEnd)\n        }\n\n    }\n\n    function abi_encode_t_uint256_to_t_uint256_fromStack(value, pos) {\n        mstore(pos, cleanup_t_uint256(value))\n    }\n\n    function abi_encode_tuple_t_uint256__to_t_uint256__fromStack_reversed(headStart , value0) -> tail {\n        tail := add(headStart, 32)\n\n        abi_encode_t_uint256_to_t_uint256_fromStack(value0,  add(headStart, 0))\n\n    }\n\n    function panic_error_0x11() {\n        mstore(0, 35408467139433450592217433187231851964531694900788300625387963629091585785856)\n        mstore(4, 0x11)\n        revert(0, 0x24)\n    }\n\n    function checked_mul_t_uint256(x, y) -> product {\n        x := cleanup_t_uint256(x)\n        y := cleanup_t_uint256(y)\n        let product_raw := mul(x, y)\n        product := cleanup_t_uint256(product_raw)\n\n        // overflow, if x != 0 and y != product/x\n        if iszero(\n            or(\n                iszero(x),\n                eq(y, div(product, x))\n            )\n        ) { panic_error_0x11() }\n\n    }\n\n}\n",
+									"id": 1,
+									"language": "Yul",
+									"name": "#utility.yul"
+								}
+							],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "608060405234801561000f575f5ffd5b5060043610610029575f3560e01c806311c9f69c1461002d575b5f5ffd5b610047600480360381019061004291906100ae565b61005d565b60405161005491906100fb565b60405180910390f35b5f5f828461006b9190610141565b90508091505092915050565b5f5ffd5b5f819050919050565b61008d8161007b565b8114610097575f5ffd5b50565b5f813590506100a881610084565b92915050565b5f5f604083850312156100c4576100c3610077565b5b5f6100d18582860161009a565b92505060206100e28582860161009a565b9150509250929050565b6100f58161007b565b82525050565b5f60208201905061010e5f8301846100ec565b92915050565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52601160045260245ffd5b5f61014b8261007b565b91506101568361007b565b92508282026101648161007b565b9150828204841483151761017b5761017a610114565b5b509291505056fea26469706673582212201aa3b1a3b36f3565f799e59f4165e9807c044d0f1eab134d8b3ee7f3f848135a64736f6c63430008220033",
+							"opcodes": "PUSH1 0x80 PUSH1 0x40 MSTORE CALLVALUE DUP1 ISZERO PUSH2 0xF JUMPI PUSH0 PUSH0 REVERT JUMPDEST POP PUSH1 0x4 CALLDATASIZE LT PUSH2 0x29 JUMPI PUSH0 CALLDATALOAD PUSH1 0xE0 SHR DUP1 PUSH4 0x11C9F69C EQ PUSH2 0x2D JUMPI JUMPDEST PUSH0 PUSH0 REVERT JUMPDEST PUSH2 0x47 PUSH1 0x4 DUP1 CALLDATASIZE SUB DUP2 ADD SWAP1 PUSH2 0x42 SWAP2 SWAP1 PUSH2 0xAE JUMP JUMPDEST PUSH2 0x5D JUMP JUMPDEST PUSH1 0x40 MLOAD PUSH2 0x54 SWAP2 SWAP1 PUSH2 0xFB JUMP JUMPDEST PUSH1 0x40 MLOAD DUP1 SWAP2 SUB SWAP1 RETURN JUMPDEST PUSH0 PUSH0 DUP3 DUP5 PUSH2 0x6B SWAP2 SWAP1 PUSH2 0x141 JUMP JUMPDEST SWAP1 POP DUP1 SWAP2 POP POP SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH0 PUSH0 REVERT JUMPDEST PUSH0 DUP2 SWAP1 POP SWAP2 SWAP1 POP JUMP JUMPDEST PUSH2 0x8D DUP2 PUSH2 0x7B JUMP JUMPDEST DUP2 EQ PUSH2 0x97 JUMPI PUSH0 PUSH0 REVERT JUMPDEST POP JUMP JUMPDEST PUSH0 DUP2 CALLDATALOAD SWAP1 POP PUSH2 0xA8 DUP2 PUSH2 0x84 JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH0 PUSH0 PUSH1 0x40 DUP4 DUP6 SUB SLT ISZERO PUSH2 0xC4 JUMPI PUSH2 0xC3 PUSH2 0x77 JUMP JUMPDEST JUMPDEST PUSH0 PUSH2 0xD1 DUP6 DUP3 DUP7 ADD PUSH2 0x9A JUMP JUMPDEST SWAP3 POP POP PUSH1 0x20 PUSH2 0xE2 DUP6 DUP3 DUP7 ADD PUSH2 0x9A JUMP JUMPDEST SWAP2 POP POP SWAP3 POP SWAP3 SWAP1 POP JUMP JUMPDEST PUSH2 0xF5 DUP2 PUSH2 0x7B JUMP JUMPDEST DUP3 MSTORE POP POP JUMP JUMPDEST PUSH0 PUSH1 0x20 DUP3 ADD SWAP1 POP PUSH2 0x10E PUSH0 DUP4 ADD DUP5 PUSH2 0xEC JUMP JUMPDEST SWAP3 SWAP2 POP POP JUMP JUMPDEST PUSH32 0x4E487B7100000000000000000000000000000000000000000000000000000000 PUSH0 MSTORE PUSH1 0x11 PUSH1 0x4 MSTORE PUSH1 0x24 PUSH0 REVERT JUMPDEST PUSH0 PUSH2 0x14B DUP3 PUSH2 0x7B JUMP JUMPDEST SWAP2 POP PUSH2 0x156 DUP4 PUSH2 0x7B JUMP JUMPDEST SWAP3 POP DUP3 DUP3 MUL PUSH2 0x164 DUP2 PUSH2 0x7B JUMP JUMPDEST SWAP2 POP DUP3 DUP3 DIV DUP5 EQ DUP4 ISZERO OR PUSH2 0x17B JUMPI PUSH2 0x17A PUSH2 0x114 JUMP JUMPDEST JUMPDEST POP SWAP3 SWAP2 POP POP JUMP INVALID LOG2 PUSH5 0x6970667358 0x22 SLT KECCAK256 BYTE LOG3 0xB1 LOG3 0xB3 PUSH16 0x3565F799E59F4165E9807C044D0F1EAB SGT 0x4D DUP12 RETURNDATACOPY SWAPN 0xF3 EXTCALL BASEFEE SGT GAS PUSH5 0x736F6C6343 STOP ADDMOD 0x22 STOP CALLER ",
+							"sourceMap": "10720:339:0:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;10757:293;;;;;;;;;;;;;:::i;:::-;;:::i;:::-;;;;;;;:::i;:::-;;;;;;;;;10887:7;10938:22;10968:2;10963;:7;;;;:::i;:::-;10938:32;;11028:14;11021:21;;;10757:293;;;;:::o;88:117:1:-;197:1;194;187:12;334:77;371:7;400:5;389:16;;334:77;;;:::o;417:122::-;490:24;508:5;490:24;:::i;:::-;483:5;480:35;470:63;;529:1;526;519:12;470:63;417:122;:::o;545:139::-;591:5;629:6;616:20;607:29;;645:33;672:5;645:33;:::i;:::-;545:139;;;;:::o;690:474::-;758:6;766;815:2;803:9;794:7;790:23;786:32;783:119;;;821:79;;:::i;:::-;783:119;941:1;966:53;1011:7;1002:6;991:9;987:22;966:53;:::i;:::-;956:63;;912:117;1068:2;1094:53;1139:7;1130:6;1119:9;1115:22;1094:53;:::i;:::-;1084:63;;1039:118;690:474;;;;;:::o;1170:118::-;1257:24;1275:5;1257:24;:::i;:::-;1252:3;1245:37;1170:118;;:::o;1294:222::-;1387:4;1425:2;1414:9;1410:18;1402:26;;1438:71;1506:1;1495:9;1491:17;1482:6;1438:71;:::i;:::-;1294:222;;;;:::o;1522:180::-;1570:77;1567:1;1560:88;1667:4;1664:1;1657:15;1691:4;1688:1;1681:15;1708:410;1748:7;1771:20;1789:1;1771:20;:::i;:::-;1766:25;;1805:20;1823:1;1805:20;:::i;:::-;1800:25;;1860:1;1857;1853:9;1882:30;1900:11;1882:30;:::i;:::-;1871:41;;2061:1;2052:7;2048:15;2045:1;2042:22;2022:1;2015:9;1995:83;1972:139;;2091:18;;:::i;:::-;1972:139;1756:362;1708:410;;;;:::o"
+						},
+						"gasEstimates": {
+							"creation": {
+								"codeDepositCost": "88000",
+								"executionCost": "133",
+								"totalCost": "88133"
+							},
+							"external": {
+								"calculateMultiplication(uint256,uint256)": "infinite"
+							}
+						},
+						"legacyAssembly": {
+							".code": [
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH",
+									"source": 0,
+									"value": "80"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH",
+									"source": 0,
+									"value": "40"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "MSTORE",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "CALLVALUE",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "DUP1",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "ISZERO",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH [tag]",
+									"source": 0,
+									"value": "1"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "JUMPI",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "REVERT",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "tag",
+									"source": 0,
+									"value": "1"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "JUMPDEST",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "POP",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH #[$]",
+									"source": 0,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "DUP1",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH [$]",
+									"source": 0,
+									"value": "0000000000000000000000000000000000000000000000000000000000000000"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "CODECOPY",
+									"source": 0
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "PUSH",
+									"source": 0,
+									"value": "0"
+								},
+								{
+									"begin": 10720,
+									"end": 11059,
+									"name": "RETURN",
+									"source": 0
+								}
+							],
+							".data": {
+								"0": {
+									".auxdata": "a26469706673582212201aa3b1a3b36f3565f799e59f4165e9807c044d0f1eab134d8b3ee7f3f848135a64736f6c63430008220033",
+									".code": [
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "80"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "40"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "MSTORE",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "CALLVALUE",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "ISZERO",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "1"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "JUMPI",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "REVERT",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "tag",
+											"source": 0,
+											"value": "1"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "POP",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "4"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "CALLDATASIZE",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "LT",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "2"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "JUMPI",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "CALLDATALOAD",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "E0"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "SHR",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "11C9F69C"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "EQ",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "3"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "JUMPI",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "tag",
+											"source": 0,
+											"value": "2"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 10720,
+											"end": 11059,
+											"name": "REVERT",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "tag",
+											"source": 0,
+											"value": "3"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "4"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH",
+											"source": 0,
+											"value": "4"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "CALLDATASIZE",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SUB",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "DUP2",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "ADD",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP1",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "5"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP2",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP1",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "6"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "tag",
+											"source": 0,
+											"value": "5"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "7"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "tag",
+											"source": 0,
+											"value": "4"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH",
+											"source": 0,
+											"value": "40"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "MLOAD",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "8"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP2",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP1",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "9"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "tag",
+											"source": 0,
+											"value": "8"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "PUSH",
+											"source": 0,
+											"value": "40"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "MLOAD",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP2",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SUB",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP1",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "RETURN",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "tag",
+											"source": 0,
+											"value": "7"
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10887,
+											"end": 10894,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 10938,
+											"end": 10960,
+											"name": "PUSH",
+											"source": 0,
+											"value": "0"
+										},
+										{
+											"begin": 10968,
+											"end": 10970,
+											"name": "DUP3",
+											"source": 0
+										},
+										{
+											"begin": 10963,
+											"end": 10965,
+											"name": "DUP5",
+											"source": 0
+										},
+										{
+											"begin": 10963,
+											"end": 10970,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "11"
+										},
+										{
+											"begin": 10963,
+											"end": 10970,
+											"name": "SWAP2",
+											"source": 0
+										},
+										{
+											"begin": 10963,
+											"end": 10970,
+											"name": "SWAP1",
+											"source": 0
+										},
+										{
+											"begin": 10963,
+											"end": 10970,
+											"name": "PUSH [tag]",
+											"source": 0,
+											"value": "12"
+										},
+										{
+											"begin": 10963,
+											"end": 10970,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 0
+										},
+										{
+											"begin": 10963,
+											"end": 10970,
+											"name": "tag",
+											"source": 0,
+											"value": "11"
+										},
+										{
+											"begin": 10963,
+											"end": 10970,
+											"name": "JUMPDEST",
+											"source": 0
+										},
+										{
+											"begin": 10938,
+											"end": 10970,
+											"name": "SWAP1",
+											"source": 0
+										},
+										{
+											"begin": 10938,
+											"end": 10970,
+											"name": "POP",
+											"source": 0
+										},
+										{
+											"begin": 11028,
+											"end": 11042,
+											"name": "DUP1",
+											"source": 0
+										},
+										{
+											"begin": 11021,
+											"end": 11042,
+											"name": "SWAP2",
+											"source": 0
+										},
+										{
+											"begin": 11021,
+											"end": 11042,
+											"name": "POP",
+											"source": 0
+										},
+										{
+											"begin": 11021,
+											"end": 11042,
+											"name": "POP",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP3",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "SWAP2",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "POP",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"name": "POP",
+											"source": 0
+										},
+										{
+											"begin": 10757,
+											"end": 11050,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 0
+										},
+										{
+											"begin": 88,
+											"end": 205,
+											"name": "tag",
+											"source": 1,
+											"value": "14"
+										},
+										{
+											"begin": 88,
+											"end": 205,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 197,
+											"end": 198,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 194,
+											"end": 195,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 187,
+											"end": 199,
+											"name": "REVERT",
+											"source": 1
+										},
+										{
+											"begin": 334,
+											"end": 411,
+											"name": "tag",
+											"source": 1,
+											"value": "16"
+										},
+										{
+											"begin": 334,
+											"end": 411,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 371,
+											"end": 378,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 400,
+											"end": 405,
+											"name": "DUP2",
+											"source": 1
+										},
+										{
+											"begin": 389,
+											"end": 405,
+											"name": "SWAP1",
+											"source": 1
+										},
+										{
+											"begin": 389,
+											"end": 405,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 334,
+											"end": 411,
+											"name": "SWAP2",
+											"source": 1
+										},
+										{
+											"begin": 334,
+											"end": 411,
+											"name": "SWAP1",
+											"source": 1
+										},
+										{
+											"begin": 334,
+											"end": 411,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 334,
+											"end": 411,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 417,
+											"end": 539,
+											"name": "tag",
+											"source": 1,
+											"value": "17"
+										},
+										{
+											"begin": 417,
+											"end": 539,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 490,
+											"end": 514,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "27"
+										},
+										{
+											"begin": 508,
+											"end": 513,
+											"name": "DUP2",
+											"source": 1
+										},
+										{
+											"begin": 490,
+											"end": 514,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "16"
+										},
+										{
+											"begin": 490,
+											"end": 514,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 490,
+											"end": 514,
+											"name": "tag",
+											"source": 1,
+											"value": "27"
+										},
+										{
+											"begin": 490,
+											"end": 514,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 483,
+											"end": 488,
+											"name": "DUP2",
+											"source": 1
+										},
+										{
+											"begin": 480,
+											"end": 515,
+											"name": "EQ",
+											"source": 1
+										},
+										{
+											"begin": 470,
+											"end": 533,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "28"
+										},
+										{
+											"begin": 470,
+											"end": 533,
+											"name": "JUMPI",
+											"source": 1
+										},
+										{
+											"begin": 529,
+											"end": 530,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 526,
+											"end": 527,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 519,
+											"end": 531,
+											"name": "REVERT",
+											"source": 1
+										},
+										{
+											"begin": 470,
+											"end": 533,
+											"name": "tag",
+											"source": 1,
+											"value": "28"
+										},
+										{
+											"begin": 470,
+											"end": 533,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 417,
+											"end": 539,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 417,
+											"end": 539,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 545,
+											"end": 684,
+											"name": "tag",
+											"source": 1,
+											"value": "18"
+										},
+										{
+											"begin": 545,
+											"end": 684,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 591,
+											"end": 596,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 629,
+											"end": 635,
+											"name": "DUP2",
+											"source": 1
+										},
+										{
+											"begin": 616,
+											"end": 636,
+											"name": "CALLDATALOAD",
+											"source": 1
+										},
+										{
+											"begin": 607,
+											"end": 636,
+											"name": "SWAP1",
+											"source": 1
+										},
+										{
+											"begin": 607,
+											"end": 636,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 645,
+											"end": 678,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "30"
+										},
+										{
+											"begin": 672,
+											"end": 677,
+											"name": "DUP2",
+											"source": 1
+										},
+										{
+											"begin": 645,
+											"end": 678,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "17"
+										},
+										{
+											"begin": 645,
+											"end": 678,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 645,
+											"end": 678,
+											"name": "tag",
+											"source": 1,
+											"value": "30"
+										},
+										{
+											"begin": 645,
+											"end": 678,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 545,
+											"end": 684,
+											"name": "SWAP3",
+											"source": 1
+										},
+										{
+											"begin": 545,
+											"end": 684,
+											"name": "SWAP2",
+											"source": 1
+										},
+										{
+											"begin": 545,
+											"end": 684,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 545,
+											"end": 684,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 545,
+											"end": 684,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"name": "tag",
+											"source": 1,
+											"value": "6"
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 758,
+											"end": 764,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 766,
+											"end": 772,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 815,
+											"end": 817,
+											"name": "PUSH",
+											"source": 1,
+											"value": "40"
+										},
+										{
+											"begin": 803,
+											"end": 812,
+											"name": "DUP4",
+											"source": 1
+										},
+										{
+											"begin": 794,
+											"end": 801,
+											"name": "DUP6",
+											"source": 1
+										},
+										{
+											"begin": 790,
+											"end": 813,
+											"name": "SUB",
+											"source": 1
+										},
+										{
+											"begin": 786,
+											"end": 818,
+											"name": "SLT",
+											"source": 1
+										},
+										{
+											"begin": 783,
+											"end": 902,
+											"name": "ISZERO",
+											"source": 1
+										},
+										{
+											"begin": 783,
+											"end": 902,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "32"
+										},
+										{
+											"begin": 783,
+											"end": 902,
+											"name": "JUMPI",
+											"source": 1
+										},
+										{
+											"begin": 821,
+											"end": 900,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "33"
+										},
+										{
+											"begin": 821,
+											"end": 900,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "14"
+										},
+										{
+											"begin": 821,
+											"end": 900,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 821,
+											"end": 900,
+											"name": "tag",
+											"source": 1,
+											"value": "33"
+										},
+										{
+											"begin": 821,
+											"end": 900,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 783,
+											"end": 902,
+											"name": "tag",
+											"source": 1,
+											"value": "32"
+										},
+										{
+											"begin": 783,
+											"end": 902,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 941,
+											"end": 942,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 966,
+											"end": 1019,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "34"
+										},
+										{
+											"begin": 1011,
+											"end": 1018,
+											"name": "DUP6",
+											"source": 1
+										},
+										{
+											"begin": 1002,
+											"end": 1008,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 991,
+											"end": 1000,
+											"name": "DUP7",
+											"source": 1
+										},
+										{
+											"begin": 987,
+											"end": 1009,
+											"name": "ADD",
+											"source": 1
+										},
+										{
+											"begin": 966,
+											"end": 1019,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "18"
+										},
+										{
+											"begin": 966,
+											"end": 1019,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 966,
+											"end": 1019,
+											"name": "tag",
+											"source": 1,
+											"value": "34"
+										},
+										{
+											"begin": 966,
+											"end": 1019,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 956,
+											"end": 1019,
+											"name": "SWAP3",
+											"source": 1
+										},
+										{
+											"begin": 956,
+											"end": 1019,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 912,
+											"end": 1029,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1068,
+											"end": 1070,
+											"name": "PUSH",
+											"source": 1,
+											"value": "20"
+										},
+										{
+											"begin": 1094,
+											"end": 1147,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "35"
+										},
+										{
+											"begin": 1139,
+											"end": 1146,
+											"name": "DUP6",
+											"source": 1
+										},
+										{
+											"begin": 1130,
+											"end": 1136,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 1119,
+											"end": 1128,
+											"name": "DUP7",
+											"source": 1
+										},
+										{
+											"begin": 1115,
+											"end": 1137,
+											"name": "ADD",
+											"source": 1
+										},
+										{
+											"begin": 1094,
+											"end": 1147,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "18"
+										},
+										{
+											"begin": 1094,
+											"end": 1147,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1094,
+											"end": 1147,
+											"name": "tag",
+											"source": 1,
+											"value": "35"
+										},
+										{
+											"begin": 1094,
+											"end": 1147,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1084,
+											"end": 1147,
+											"name": "SWAP2",
+											"source": 1
+										},
+										{
+											"begin": 1084,
+											"end": 1147,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1039,
+											"end": 1157,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"name": "SWAP3",
+											"source": 1
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"name": "SWAP3",
+											"source": 1
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"name": "SWAP1",
+											"source": 1
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 690,
+											"end": 1164,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1170,
+											"end": 1288,
+											"name": "tag",
+											"source": 1,
+											"value": "19"
+										},
+										{
+											"begin": 1170,
+											"end": 1288,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1257,
+											"end": 1281,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "37"
+										},
+										{
+											"begin": 1275,
+											"end": 1280,
+											"name": "DUP2",
+											"source": 1
+										},
+										{
+											"begin": 1257,
+											"end": 1281,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "16"
+										},
+										{
+											"begin": 1257,
+											"end": 1281,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1257,
+											"end": 1281,
+											"name": "tag",
+											"source": 1,
+											"value": "37"
+										},
+										{
+											"begin": 1257,
+											"end": 1281,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1252,
+											"end": 1255,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 1245,
+											"end": 1282,
+											"name": "MSTORE",
+											"source": 1
+										},
+										{
+											"begin": 1170,
+											"end": 1288,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1170,
+											"end": 1288,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1170,
+											"end": 1288,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1294,
+											"end": 1516,
+											"name": "tag",
+											"source": 1,
+											"value": "9"
+										},
+										{
+											"begin": 1294,
+											"end": 1516,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1387,
+											"end": 1391,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 1425,
+											"end": 1427,
+											"name": "PUSH",
+											"source": 1,
+											"value": "20"
+										},
+										{
+											"begin": 1414,
+											"end": 1423,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 1410,
+											"end": 1428,
+											"name": "ADD",
+											"source": 1
+										},
+										{
+											"begin": 1402,
+											"end": 1428,
+											"name": "SWAP1",
+											"source": 1
+										},
+										{
+											"begin": 1402,
+											"end": 1428,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1438,
+											"end": 1509,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "39"
+										},
+										{
+											"begin": 1506,
+											"end": 1507,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 1495,
+											"end": 1504,
+											"name": "DUP4",
+											"source": 1
+										},
+										{
+											"begin": 1491,
+											"end": 1508,
+											"name": "ADD",
+											"source": 1
+										},
+										{
+											"begin": 1482,
+											"end": 1488,
+											"name": "DUP5",
+											"source": 1
+										},
+										{
+											"begin": 1438,
+											"end": 1509,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "19"
+										},
+										{
+											"begin": 1438,
+											"end": 1509,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1438,
+											"end": 1509,
+											"name": "tag",
+											"source": 1,
+											"value": "39"
+										},
+										{
+											"begin": 1438,
+											"end": 1509,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1294,
+											"end": 1516,
+											"name": "SWAP3",
+											"source": 1
+										},
+										{
+											"begin": 1294,
+											"end": 1516,
+											"name": "SWAP2",
+											"source": 1
+										},
+										{
+											"begin": 1294,
+											"end": 1516,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1294,
+											"end": 1516,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1294,
+											"end": 1516,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1522,
+											"end": 1702,
+											"name": "tag",
+											"source": 1,
+											"value": "20"
+										},
+										{
+											"begin": 1522,
+											"end": 1702,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1570,
+											"end": 1647,
+											"name": "PUSH",
+											"source": 1,
+											"value": "4E487B7100000000000000000000000000000000000000000000000000000000"
+										},
+										{
+											"begin": 1567,
+											"end": 1568,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 1560,
+											"end": 1648,
+											"name": "MSTORE",
+											"source": 1
+										},
+										{
+											"begin": 1667,
+											"end": 1671,
+											"name": "PUSH",
+											"source": 1,
+											"value": "11"
+										},
+										{
+											"begin": 1664,
+											"end": 1665,
+											"name": "PUSH",
+											"source": 1,
+											"value": "4"
+										},
+										{
+											"begin": 1657,
+											"end": 1672,
+											"name": "MSTORE",
+											"source": 1
+										},
+										{
+											"begin": 1691,
+											"end": 1695,
+											"name": "PUSH",
+											"source": 1,
+											"value": "24"
+										},
+										{
+											"begin": 1688,
+											"end": 1689,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 1681,
+											"end": 1696,
+											"name": "REVERT",
+											"source": 1
+										},
+										{
+											"begin": 1708,
+											"end": 2118,
+											"name": "tag",
+											"source": 1,
+											"value": "12"
+										},
+										{
+											"begin": 1708,
+											"end": 2118,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1748,
+											"end": 1755,
+											"name": "PUSH",
+											"source": 1,
+											"value": "0"
+										},
+										{
+											"begin": 1771,
+											"end": 1791,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "42"
+										},
+										{
+											"begin": 1789,
+											"end": 1790,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 1771,
+											"end": 1791,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "16"
+										},
+										{
+											"begin": 1771,
+											"end": 1791,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1771,
+											"end": 1791,
+											"name": "tag",
+											"source": 1,
+											"value": "42"
+										},
+										{
+											"begin": 1771,
+											"end": 1791,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1766,
+											"end": 1791,
+											"name": "SWAP2",
+											"source": 1
+										},
+										{
+											"begin": 1766,
+											"end": 1791,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1805,
+											"end": 1825,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "43"
+										},
+										{
+											"begin": 1823,
+											"end": 1824,
+											"name": "DUP4",
+											"source": 1
+										},
+										{
+											"begin": 1805,
+											"end": 1825,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "16"
+										},
+										{
+											"begin": 1805,
+											"end": 1825,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1805,
+											"end": 1825,
+											"name": "tag",
+											"source": 1,
+											"value": "43"
+										},
+										{
+											"begin": 1805,
+											"end": 1825,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1800,
+											"end": 1825,
+											"name": "SWAP3",
+											"source": 1
+										},
+										{
+											"begin": 1800,
+											"end": 1825,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1860,
+											"end": 1861,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 1857,
+											"end": 1858,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 1853,
+											"end": 1862,
+											"name": "MUL",
+											"source": 1
+										},
+										{
+											"begin": 1882,
+											"end": 1912,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "44"
+										},
+										{
+											"begin": 1900,
+											"end": 1911,
+											"name": "DUP2",
+											"source": 1
+										},
+										{
+											"begin": 1882,
+											"end": 1912,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "16"
+										},
+										{
+											"begin": 1882,
+											"end": 1912,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 1882,
+											"end": 1912,
+											"name": "tag",
+											"source": 1,
+											"value": "44"
+										},
+										{
+											"begin": 1882,
+											"end": 1912,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1871,
+											"end": 1912,
+											"name": "SWAP2",
+											"source": 1
+										},
+										{
+											"begin": 1871,
+											"end": 1912,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 2061,
+											"end": 2062,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 2052,
+											"end": 2059,
+											"name": "DUP3",
+											"source": 1
+										},
+										{
+											"begin": 2048,
+											"end": 2063,
+											"name": "DIV",
+											"source": 1
+										},
+										{
+											"begin": 2045,
+											"end": 2046,
+											"name": "DUP5",
+											"source": 1
+										},
+										{
+											"begin": 2042,
+											"end": 2064,
+											"name": "EQ",
+											"source": 1
+										},
+										{
+											"begin": 2022,
+											"end": 2023,
+											"name": "DUP4",
+											"source": 1
+										},
+										{
+											"begin": 2015,
+											"end": 2024,
+											"name": "ISZERO",
+											"source": 1
+										},
+										{
+											"begin": 1995,
+											"end": 2078,
+											"name": "OR",
+											"source": 1
+										},
+										{
+											"begin": 1972,
+											"end": 2111,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "45"
+										},
+										{
+											"begin": 1972,
+											"end": 2111,
+											"name": "JUMPI",
+											"source": 1
+										},
+										{
+											"begin": 2091,
+											"end": 2109,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "46"
+										},
+										{
+											"begin": 2091,
+											"end": 2109,
+											"name": "PUSH [tag]",
+											"source": 1,
+											"value": "20"
+										},
+										{
+											"begin": 2091,
+											"end": 2109,
+											"jumpType": "[in]",
+											"name": "JUMP",
+											"source": 1
+										},
+										{
+											"begin": 2091,
+											"end": 2109,
+											"name": "tag",
+											"source": 1,
+											"value": "46"
+										},
+										{
+											"begin": 2091,
+											"end": 2109,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1972,
+											"end": 2111,
+											"name": "tag",
+											"source": 1,
+											"value": "45"
+										},
+										{
+											"begin": 1972,
+											"end": 2111,
+											"name": "JUMPDEST",
+											"source": 1
+										},
+										{
+											"begin": 1756,
+											"end": 2118,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1708,
+											"end": 2118,
+											"name": "SWAP3",
+											"source": 1
+										},
+										{
+											"begin": 1708,
+											"end": 2118,
+											"name": "SWAP2",
+											"source": 1
+										},
+										{
+											"begin": 1708,
+											"end": 2118,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1708,
+											"end": 2118,
+											"name": "POP",
+											"source": 1
+										},
+										{
+											"begin": 1708,
+											"end": 2118,
+											"jumpType": "[out]",
+											"name": "JUMP",
+											"source": 1
+										}
+									]
+								}
+							},
+							"sourceList": [
+								"task16.sol",
+								"#utility.yul"
+							]
+						},
+						"methodIdentifiers": {
+							"calculateMultiplication(uint256,uint256)": "11c9f69c"
+						}
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.34+commit.80d5c536\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_a\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_b\",\"type\":\"uint256\"}],\"name\":\"calculateMultiplication\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"task16.sol\":\"LocalUintVariableVul\"},\"evmVersion\":\"osaka\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"task16.sol\":{\"keccak256\":\"0x9b60ae2badf34e9dbd2fca8c41739d8e08f898065796a4fc98a33790d10a3ae3\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://02abaea9cab994630f2f8ce126a120c81e7665da1f35584cbf4a1dff3fd75cdd\",\"dweb:/ipfs/QmZ6fwcwMTzo92JDvHRdYjecEQZ8dhDg29ifANK2awq4ZS\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [],
+						"types": null
+					},
+					"userdoc": {
+						"kind": "user",
+						"methods": {},
+						"version": 1
+					}
+				}
+			}
+		},
+		"sources": {
+			"task16.sol": {
+				"ast": {
+					"absolutePath": "task16.sol",
+					"exportedSymbols": {
+						"LocalUintVariableVul": [
+							20
+						]
+					},
+					"id": 21,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".20"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "33:24:0"
+						},
+						{
+							"abstract": false,
+							"baseContracts": [],
+							"canonicalName": "LocalUintVariableVul",
+							"contractDependencies": [],
+							"contractKind": "contract",
+							"fullyImplemented": true,
+							"id": 20,
+							"linearizedBaseContracts": [
+								20
+							],
+							"name": "LocalUintVariableVul",
+							"nameLocation": "10729:20:0",
+							"nodeType": "ContractDefinition",
+							"nodes": [
+								{
+									"body": {
+										"id": 18,
+										"nodeType": "Block",
+										"src": "10901:149:0",
+										"statements": [
+											{
+												"assignments": [
+													11
+												],
+												"declarations": [
+													{
+														"constant": false,
+														"id": 11,
+														"mutability": "mutable",
+														"name": "multiplication",
+														"nameLocation": "10946:14:0",
+														"nodeType": "VariableDeclaration",
+														"scope": 18,
+														"src": "10938:22:0",
+														"stateVariable": false,
+														"storageLocation": "default",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														},
+														"typeName": {
+															"id": 10,
+															"name": "uint256",
+															"nodeType": "ElementaryTypeName",
+															"src": "10938:7:0",
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															}
+														},
+														"visibility": "internal"
+													}
+												],
+												"id": 15,
+												"initialValue": {
+													"commonType": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													},
+													"id": 14,
+													"isConstant": false,
+													"isLValue": false,
+													"isPure": false,
+													"lValueRequested": false,
+													"leftExpression": {
+														"id": 12,
+														"name": "_a",
+														"nodeType": "Identifier",
+														"overloadedDeclarations": [],
+														"referencedDeclaration": 3,
+														"src": "10963:2:0",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													},
+													"nodeType": "BinaryOperation",
+													"operator": "*",
+													"rightExpression": {
+														"id": 13,
+														"name": "_b",
+														"nodeType": "Identifier",
+														"overloadedDeclarations": [],
+														"referencedDeclaration": 5,
+														"src": "10968:2:0",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													},
+													"src": "10963:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"nodeType": "VariableDeclarationStatement",
+												"src": "10938:32:0"
+											},
+											{
+												"expression": {
+													"id": 16,
+													"name": "multiplication",
+													"nodeType": "Identifier",
+													"overloadedDeclarations": [],
+													"referencedDeclaration": 11,
+													"src": "11028:14:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"functionReturnParameters": 9,
+												"id": 17,
+												"nodeType": "Return",
+												"src": "11021:21:0"
+											}
+										]
+									},
+									"functionSelector": "11c9f69c",
+									"id": 19,
+									"implemented": true,
+									"kind": "function",
+									"modifiers": [],
+									"name": "calculateMultiplication",
+									"nameLocation": "10766:23:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 6,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 3,
+												"mutability": "mutable",
+												"name": "_a",
+												"nameLocation": "10808:2:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 19,
+												"src": "10800:10:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 2,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "10800:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											},
+											{
+												"constant": false,
+												"id": 5,
+												"mutability": "mutable",
+												"name": "_b",
+												"nameLocation": "10829:2:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 19,
+												"src": "10821:10:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 4,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "10821:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "10789:49:0"
+									},
+									"returnParameters": {
+										"id": 9,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 8,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 19,
+												"src": "10887:7:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 7,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "10887:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "10886:9:0"
+									},
+									"scope": 20,
+									"src": "10757:293:0",
+									"stateMutability": "pure",
+									"virtual": false,
+									"visibility": "public"
+								}
+							],
+							"scope": 21,
+							"src": "10720:339:0",
+							"usedErrors": [],
+							"usedEvents": []
+						}
+					],
+					"src": "33:11026:0"
+				},
+				"id": 0
+			}
+		}
+	}
+}
