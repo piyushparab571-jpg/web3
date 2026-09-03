@@ -7,6 +7,19 @@
 		"abi": [
 			{
 				"inputs": [],
+				"name": "copyStorageToMemory",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "createMemoryArray",
 				"outputs": [
 					{
@@ -16,6 +29,45 @@
 					}
 				],
 				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "createMemoryVariable",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "returnMemoryString",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "storedName",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			}
 		],
@@ -32,7 +84,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"task17.sol": "MemoryLifecycleVul"
+			"task18.sol": "MemoryLifecycleVul"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -46,12 +98,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"task17.sol": {
-			"keccak256": "0xbde289f6412bf184d460f83572a60059056be58fdf86671a3479aa3aa91e1c7f",
+		"task18.sol": {
+			"keccak256": "0x90b26b2c9de78d3fd0699a76d10a8b870683f40592117da2ae58ccb077622760",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://396716a381ecb00a112ac26f488c23dca5a821f147ad9ce5dadc28133296b6b1",
-				"dweb:/ipfs/QmXH2FG3WvGnjXRLqJiB6BMr428wcuPF7nTJvmHzz1CNHZ"
+				"bzz-raw://3741cf24f01c899912caf681be66d590af0e8861cbb86d5920ac795653db488e",
+				"dweb:/ipfs/QmczvZmZtwCzCWJFHB5atRSR6FER8QyHBqPu91aN17Kmgp"
 			]
 		}
 	},
