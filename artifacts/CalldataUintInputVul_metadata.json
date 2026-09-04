@@ -1,0 +1,65 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "numbers",
+						"type": "uint256[]"
+					}
+				],
+				"name": "sumArray",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task26.sol": "CalldataUintInputVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task26.sol": {
+			"keccak256": "0x68c00ec43333e8d2e5be900a34ce675baa4eab689b2ee0cf0de693beed206dd2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://60d4f8247c15eeec5e5b4eef63248ba2de0d657653c09cbe8cf2fac0bcf29540",
+				"dweb:/ipfs/QmfR9Rk64na5q8qLe96N5tDDq8UbZhYCWFxKh35zYzkbYh"
+			]
+		}
+	},
+	"version": 1
+}
