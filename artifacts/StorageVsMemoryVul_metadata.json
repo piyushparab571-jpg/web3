@@ -1,0 +1,161 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "addStorageArray",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "createUser",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "memoryArray",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "memoryCopy",
+				"outputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "",
+						"type": "uint256[]"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "modifyStorageArray",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "storageArray",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "updateMemory",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "updateStorage",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "users",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "score",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bool",
+						"name": "active",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task23.sol": "StorageVsMemoryVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task23.sol": {
+			"keccak256": "0xd285643e73a893bb6ab3b8295be65f15afb929c8364d342e53eafa1f20d22ed6",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://3e2e386af7fd1abe95798f30da0a5bd4985fb3009f0007c17e0946caf4d3a536",
+				"dweb:/ipfs/QmZkYPu8fdiZwtiwv6P8mfabCN7zuK1Phjzgspa2JWKj6Q"
+			]
+		}
+	},
+	"version": 1
+}
