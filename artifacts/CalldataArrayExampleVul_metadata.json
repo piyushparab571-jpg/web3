@@ -1,0 +1,65 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_numbers",
+						"type": "uint256[]"
+					}
+				],
+				"name": "findMaximum",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task27.sol": "CalldataArrayExampleVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task27.sol": {
+			"keccak256": "0xf4a7284ca02ac7fa9c9d97be8b95d1859034247bc251b2e8b73088d276ebb4b7",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://c70caba72e6dce528c5daf72dc368795e74eaf8071c51a26db240506628ce5b4",
+				"dweb:/ipfs/QmY5gEzYhMWkTd37vbTqeNFLTnnDBmmUDTRpN7Prq5FoXk"
+			]
+		}
+	},
+	"version": 1
+}
