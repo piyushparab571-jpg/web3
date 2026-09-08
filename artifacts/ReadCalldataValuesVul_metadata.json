@@ -1,0 +1,65 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256[]",
+						"name": "_numbers",
+						"type": "uint256[]"
+					}
+				],
+				"name": "findLargest",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task28.sol": "ReadCalldataValuesVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task28.sol": {
+			"keccak256": "0x5a89633b5acaf075578780e5ed062ab4bae0beb60f308fd59d0fd8e70b9b55e9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://36017047e61db1f01a80dacd5419c89bc32858d583522da838a42e2b7385be36",
+				"dweb:/ipfs/Qmbim99dqjsRpvG7q7H1uAiUihRhRCevBfjdxb2Hg3GRcS"
+			]
+		}
+	},
+	"version": 1
+}
