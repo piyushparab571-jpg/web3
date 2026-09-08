@@ -1,0 +1,78 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "MAX_INPUT_SIZE",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string[]",
+						"name": "_messages",
+						"type": "string[]"
+					}
+				],
+				"name": "countTotalCharacters",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task32.sol": "ExternalCalldataOptimizationVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task32.sol": {
+			"keccak256": "0x8964ba1d9f75eeb53c481313401a0f7d50948a8e452967cc41dd3b54461217ed",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ce5fb1e573683c757a18a6163f93e1f6a44e23aeee8418b83c2b58cac92ce9a0",
+				"dweb:/ipfs/QmNMABew342rj4JXEJ9DucMTXXiUo9zndETPwSpgMEXpt8"
+			]
+		}
+	},
+	"version": 1
+}
