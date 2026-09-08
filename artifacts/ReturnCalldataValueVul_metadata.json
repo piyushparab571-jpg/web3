@@ -8,6 +8,25 @@
 			{
 				"inputs": [
 					{
+						"internalType": "string",
+						"name": "_message",
+						"type": "string"
+					}
+				],
+				"name": "returnMessage",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
 						"internalType": "uint256[]",
 						"name": "_numbers",
 						"type": "uint256[]"
@@ -22,6 +41,51 @@
 					}
 				],
 				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_number",
+						"type": "uint256"
+					}
+				],
+				"name": "returnUint",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_message",
+						"type": "string"
+					}
+				],
+				"name": "saveMessage",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "savedMessage",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			}
 		],
@@ -38,7 +102,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"task33.sol": "ReturnCalldataValueVul"
+			"task34.sol": "ReturnCalldataValueVul"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -52,12 +116,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"task33.sol": {
-			"keccak256": "0x65e33d8a7411cd46b42d8df8a84d5d840b01eba1c1f13b74ceba324a8d914489",
+		"task34.sol": {
+			"keccak256": "0xad47eeba5b2e3322dfac9f323a19dd86ee3a9ffe1fc1b1b83e7f53d7cf3504d8",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://d92d2a1d28da5b5e49975dda8bd76e066e6825dde3799b8c7772e3cda4a5de07",
-				"dweb:/ipfs/QmZ41X3qUBdnRou6nvHpNejHAn1TjLhuTYoywdon96ukQ8"
+				"bzz-raw://8e28ec1d068a3891a5f1464a4d7e92bc946f874b704cf83948dbf7efd8ff3b8e",
+				"dweb:/ipfs/QmSSzREfsVev1CGERPHwvVAaqzAqTtkAoadgc5eLEgAWGv"
 			]
 		}
 	},
