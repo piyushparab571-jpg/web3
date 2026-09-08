@@ -1,0 +1,65 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_message",
+						"type": "string"
+					}
+				],
+				"name": "modifyString",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task29.sol": "CalldataRestrictionVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task29.sol": {
+			"keccak256": "0xaf2b9cca4d2fd10a65dc6c1b6330af4f23667f5300d6f8b07228881182c77248",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ad3c66e4c092345b4ec4db6b48594f3534cfccebcd82ddc3ab725932f5a28382",
+				"dweb:/ipfs/QmSv9cPN77stPZEN9dsegKiH8FUoNC2XciCMe9fpSGuekg"
+			]
+		}
+	},
+	"version": 1
+}

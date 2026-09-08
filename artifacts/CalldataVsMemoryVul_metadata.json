@@ -1,0 +1,65 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "string[]",
+						"name": "_messages",
+						"type": "string[]"
+					}
+				],
+				"name": "modifyStringArray",
+				"outputs": [
+					{
+						"internalType": "string[]",
+						"name": "",
+						"type": "string[]"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task30.sol": "CalldataVsMemoryVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task30.sol": {
+			"keccak256": "0x8b62752b52eee70fbaffad2b08a08d64d120d9d66b9410e5f1e131bf0a76b006",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b8d9d3bd5912fc2c564057dfa8ac3733c408e0f69e0e6101d25c1e2b400209a5",
+				"dweb:/ipfs/QmdzGBZtEiqZuNJ3M9SntQtJQ9djZyfi5qJFkUrzof8pGV"
+			]
+		}
+	},
+	"version": 1
+}
