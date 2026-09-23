@@ -95,23 +95,23 @@ Auditors inspect:
 TARGET CONTRACT
 =========================================================
 */
-
+/*
     contract CallTargetVul {
         /*
             TRACK EXECUTIONS
-        */
+        
         uint256 public counter;
 
         /*
         =====================================================
         SUCCESS FUNCTION
         =====================================================
-        */
+        
 
         function successFunction()external{
             /*
                 Increment counter.
-            */
+            
             counter++;
         }
 
@@ -119,12 +119,12 @@ TARGET CONTRACT
         =====================================================
         FAILING FUNCTION
         =====================================================
-        */
+        
 
         function failFunction()   external   pure{
             /*
                 Intentionally revert.
-            */
+            *
             revert("Intentional failure");
         }
 
@@ -132,12 +132,12 @@ TARGET CONTRACT
         =====================================================
         REJECT ETH
         =====================================================
-        */
+        
 
         receive() external  payable{
             /*
                 Reject ETH transfers.
-            */
+            
             revert("ETH rejected");
         }
     }
@@ -146,12 +146,12 @@ TARGET CONTRACT
     =========================================================
     SAFE CALLER CONTRACT
     =========================================================
-    */
+    
 
     contract SafeCallHandlerVul {
         /*
             TRACK RESULTS
-        */
+        *
         bool public lastSuccess;
 
         bytes public lastData;
@@ -162,21 +162,21 @@ TARGET CONTRACT
         =====================================================
         SAFE FUNCTION CALL
         =====================================================
-        */
+        *
 
         function safeFunctionCall(  address _target ) external{
             /*
                 Local state update.
-            */
+            *
             executionCounter++;
 
             /*
                 Low-level external call.
-            */
+            *
             (bool success, bytes memory data) = _target.call(abi.encodeWithSignature( "successFunction()"));
             /*
                 Store results.
-            */
+            *
             lastSuccess = success;
 
             lastData = data;
@@ -188,7 +188,7 @@ TARGET CONTRACT
 
             If external call failed:
             transaction fully reverts.
-            */
+            *
             require( success,  "External function call failed" );
         }
 
@@ -196,21 +196,21 @@ TARGET CONTRACT
         =====================================================
         SAFE FAILING CALL
         =====================================================
-        */
+        *
 
         function safeFailingCall(  address _target)  external{
             /*
                 Local state update.
-            */
+            *
             executionCounter++;
 
             /*
                 External call that fails.
-            */
+            *
             (bool success, bytes memory data) = _target.call(abi.encodeWithSignature("failFunction()"));
             /*
                 Save results.
-            */
+            *
             lastSuccess = success;
 
             lastData = data;
@@ -219,23 +219,23 @@ TARGET CONTRACT
                 SAFE FAILURE HANDLING.
 
                 Revert if call failed.
-            */
+            *
             require(success, "External call reverted");
         }
         /*
         =====================================================
         SAFE ETH TRANSFER
         =====================================================
-        */
+        *
 
         function safeETHTransfer(address payable _target)  external payable {
-            /*
+            /
                 Attempt ETH transfer.
-            */
+            *
             (bool success, bytes memory data) = _target.call{ value: msg.value }("");
             /*
                 Store results.
-            */
+            *
             lastSuccess = success;
             lastData = data;
 
@@ -243,11 +243,11 @@ TARGET CONTRACT
                 SAFE CHECK.
 
                 Prevent silent ETH-transfer failure.
-        */
+        *
         require(success,  "ETH transfer failed");
     }
 }
-
+*/
 /*
 =========================================================
 EXECUTION FLOW
