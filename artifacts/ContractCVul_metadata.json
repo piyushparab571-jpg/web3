@@ -1,0 +1,73 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "counter",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "failStep",
+				"outputs": [],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "finalStep",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task63.sol": "ContractCVul"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task63.sol": {
+			"keccak256": "0xc0c2865452bbd7b555455d9f81fcc67aa86c946e43494326eb82145a29fbb254",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://32f446fd6529549b27a425987a44471dea611843113b28dfa105b0da8d4b4482",
+				"dweb:/ipfs/QmWkgC6Fw4cK73kNz3HtdtUjo6FgNAQ1G1Ar8YyFiBJ5zX"
+			]
+		}
+	},
+	"version": 1
+}
