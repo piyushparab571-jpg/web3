@@ -6,6 +6,19 @@
 	"output": {
 		"abi": [
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_owner",
+						"type": "address"
+					}
+				],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "owner",
 				"outputs": [
@@ -16,19 +29,6 @@
 					}
 				],
 				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address",
-						"name": "_owner",
-						"type": "address"
-					}
-				],
-				"name": "setOwner",
-				"outputs": [],
-				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -71,7 +71,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"task82.sol": "LogicV1"
+			"task83.sol": "LogicV1"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
@@ -85,12 +85,12 @@
 		"remappings": []
 	},
 	"sources": {
-		"task82.sol": {
-			"keccak256": "0xf167f982f2f10b9b46d924e4377649407e773268e35f8ffd616ca353f80d2aed",
+		"task83.sol": {
+			"keccak256": "0x80311f502d0f6229f3c370d7e0078eaff0fc89b18f4742eb2b6ebab21e52646c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f513bb7c9e56cb7f476dd3c9e123e1f80282e88305e0c59834778db8c4677ba3",
-				"dweb:/ipfs/QmTTnBQ4kBaAncCPt3UX9LFKqbAdAg9vcYKSrSMhgikE4y"
+				"bzz-raw://d54bc280e641c8d202662dd01848cc0334ae1bd44ef62c2f914f2135ab1b2dec",
+				"dweb:/ipfs/Qmedx2v4dq5Ahyd386dyMZ6ykxWNmgjDgCUH9FD3ZLHpd7"
 			]
 		}
 	},

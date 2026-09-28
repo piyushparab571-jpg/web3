@@ -9,13 +9,41 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "_owner",
+						"name": "_implementation",
 						"type": "address"
 					}
 				],
-				"name": "initialize",
-				"outputs": [],
 				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "fallback"
+			},
+			{
+				"inputs": [],
+				"name": "admin",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "implementation",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -34,12 +62,12 @@
 			{
 				"inputs": [
 					{
-						"internalType": "uint256",
-						"name": "_value",
-						"type": "uint256"
+						"internalType": "address",
+						"name": "_newImplementation",
+						"type": "address"
 					}
 				],
-				"name": "setValue",
+				"name": "upgrade",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -56,6 +84,10 @@
 				],
 				"stateMutability": "view",
 				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
 			}
 		],
 		"devdoc": {
@@ -71,7 +103,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"task83.sol": "LogicV1Vul"
+			"task83.sol": "SimpleProxy"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
