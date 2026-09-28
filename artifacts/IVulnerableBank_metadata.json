@@ -1,0 +1,66 @@
+{
+	"compiler": {
+		"version": "0.8.34+commit.80d5c536"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "deposit",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "withdraw",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"task77.sol": "IVulnerableBank"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"task77.sol": {
+			"keccak256": "0x3b2ef0c247e4e917e0ef9c07cea6fc6ab2847f0b19943e866129245e97976cb5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e364939adf234cd0b210ae1f8b717fe2e6bb66493cfff9951a746f6e314d9331",
+				"dweb:/ipfs/QmYLuD2th3nMJv3qo6QFcoggcAt1GH4YuEyNNKTpD4Y7wR"
+			]
+		}
+	},
+	"version": 1
+}
