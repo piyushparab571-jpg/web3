@@ -71,7 +71,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"task82.sol": "LogicV1"
+			"task82.sol": "LogicV1Vul"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},

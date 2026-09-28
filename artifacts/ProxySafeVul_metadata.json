@@ -6,8 +6,19 @@
 	"output": {
 		"abi": [
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_impl",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
 				"inputs": [],
-				"name": "owner",
+				"name": "admin",
 				"outputs": [
 					{
 						"internalType": "address",
@@ -19,16 +30,16 @@
 				"type": "function"
 			},
 			{
-				"inputs": [
+				"inputs": [],
+				"name": "implementation",
+				"outputs": [
 					{
 						"internalType": "address",
-						"name": "_owner",
+						"name": "",
 						"type": "address"
 					}
 				],
-				"name": "setOwner",
-				"outputs": [],
-				"stateMutability": "nonpayable",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
@@ -42,19 +53,6 @@
 				"name": "setValue",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "value",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
 				"type": "function"
 			}
 		],
@@ -71,7 +69,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"task82.sol": "LogicV1"
+			"task82.sol": "ProxySafeVul"
 		},
 		"evmVersion": "osaka",
 		"libraries": {},
